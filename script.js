@@ -10,7 +10,6 @@ const CONFIG = {
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
     initializeTimer();
-    initializeIdentificationSystem();
     initializeForm();
     initializeGuestFilter();
     initializeModal();
@@ -110,94 +109,6 @@ function handleTimerExpired() {
     if (hoursEl) hoursEl.textContent = '00';
     if (minutesEl) minutesEl.textContent = '00';
     if (secondsEl) secondsEl.textContent = '00';
-}
-
-// ===== SISTEMA DE IDENTIFICAÇÃO =====
-function initializeIdentificationSystem() {
-    const identificationModal = document.getElementById('identificationModal');
-    const userIdentificationSelect = document.getElementById('userIdentification');
-    const confirmIdentificationBtn = document.getElementById('confirmIdentification');
-    const entranceOverlay = document.querySelector('.entrance-overlay');
-
-    // Verificar se já existe identificação salva
-    const savedIdentity = localStorage.getItem(CONFIG.userIdentityKey);
-
-    if (!savedIdentity) {
-        // Aguardar fim da animação de entrada (7s) e mostrar modal
-        setTimeout(() => {
-            identificationModal.classList.add('show');
-        }, 7000);
-    } else {
-        // Já tem identificação, aplicar restrição no formulário
-        applyGuestRestriction(savedIdentity);
-    }
-
-    // Confirmar identificação
-    confirmIdentificationBtn.addEventListener('click', () => {
-        const selectedGuest = userIdentificationSelect.value;
-        const selectedGuestText = userIdentificationSelect.options[userIdentificationSelect.selectedIndex].text;
-
-        if (!selectedGuest) {
-            showNotification('Por favor, selecione seu nome', 'error');
-            return;
-        }
-
-        // Salvar identificação no localStorage
-        localStorage.setItem(CONFIG.userIdentityKey, JSON.stringify({
-            value: selectedGuest,
-            text: selectedGuestText,
-            timestamp: new Date().getTime()
-        }));
-
-        // Fechar modal
-        identificationModal.classList.remove('show');
-
-        // Aplicar restrição
-        applyGuestRestriction(JSON.stringify({
-            value: selectedGuest,
-            text: selectedGuestText
-        }));
-
-        // Mostrar mensagem de boas-vindas
-        showNotification(`Bem-vindo(a), ${selectedGuestText}! 🎉`, 'success');
-    });
-}
-
-function applyGuestRestriction(savedIdentityJSON) {
-    const identity = JSON.parse(savedIdentityJSON);
-    const guestSelect = document.getElementById('guestName');
-
-    if (!guestSelect) return;
-
-    // Desabilitar select para não poder trocar
-    guestSelect.disabled = true;
-
-    // Selecionar automaticamente o nome do usuário
-    guestSelect.value = identity.value;
-
-    // Adicionar mensagem visual de que está bloqueado
-    const formGroup = guestSelect.closest('.form-group');
-    if (formGroup && !formGroup.querySelector('.locked-message')) {
-        const lockedMessage = document.createElement('div');
-        lockedMessage.className = 'locked-message';
-        lockedMessage.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5" />
-                <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="1.5" />
-                <circle cx="12" cy="16" r="1.5" fill="currentColor" />
-            </svg>
-            <span>Confirmando como: <strong>${identity.text}</strong></span>
-        `;
-        formGroup.appendChild(lockedMessage);
-    }
-
-    // Desabilitar botões de filtro
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(btn => {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-    });
 }
 
 // ===== FORMULÁRIO RSVP =====
