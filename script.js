@@ -764,60 +764,11 @@ function initializeMusicPlayer() {
 function openPixModal() {
     const modal = document.getElementById('pixModal');
     modal.classList.add('show');
-    generatePixQRCode();
 }
 
 function closePixModal() {
     const modal = document.getElementById('pixModal');
     modal.classList.remove('show');
-}
-
-function generatePixQRCode() {
-    const pixKey = '53243721881'; // CPF sem formatação
-    const pixName = 'MATHEUS VINICIUS DOS REIS SOUZA';
-    const pixCity = 'SAO PAULO';
-
-    // Gerar payload PIX
-    const payload = generatePixPayload(pixKey, pixName, pixCity);
-
-    // Gerar QR Code
-    const qrCodeContainer = document.getElementById('pixQRCode');
-    qrCodeContainer.innerHTML = ''; // Limpar conteúdo anterior
-
-    // Usar biblioteca QRCode.js (vamos adicionar via CDN no HTML)
-    if (typeof QRCode !== 'undefined') {
-        new QRCode(qrCodeContainer, {
-            text: payload,
-            width: 250,
-            height: 250,
-            colorDark: '#0A1929',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.M
-        });
-    } else {
-        // Fallback se a biblioteca não carregar
-        qrCodeContainer.innerHTML = '<p style="color: var(--navy-blue); opacity: 0.7;">Use a chave PIX abaixo para fazer sua contribuição</p>';
-    }
-}
-
-function generatePixPayload(pixKey, name, city) {
-    // Formato simplificado do payload PIX
-    // Para um payload completo, seria necessário seguir o padrão EMV
-    // Aqui usamos uma versão básica
-
-    const payload = `00020126${formatPixField(pixKey)}52040000530398654040.005802BR5925${name.padEnd(25, ' ')}6009${city.padEnd(9, ' ')}62070503***6304`;
-    return payload + calculateCRC16(payload);
-}
-
-function formatPixField(value) {
-    const length = value.length.toString().padStart(2, '0');
-    return `${length}${value}`;
-}
-
-function calculateCRC16(payload) {
-    // Implementação simplificada do CRC16
-    // Em produção, usar biblioteca específica
-    return 'ABCD'; // Placeholder
 }
 
 function copyPixKey() {
