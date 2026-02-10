@@ -2719,6 +2719,90 @@ h4 {
     font-weight: 300;
 }
 
+/* ===== BOTÃO DE MÚSICA FLUTUANTE ===== */
+.music-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(10, 25, 41, 0.1);
+    box-shadow: 0 8px 32px rgba(10, 25, 41, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.music-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(10, 25, 41, 0.25);
+    background: rgba(255, 255, 255, 1);
+}
+
+.music-button:active {
+    transform: scale(0.95);
+}
+
+.music-button .music-icon {
+    color: var(--navy-blue);
+    transition: all 0.3s ease;
+}
+
+.music-button.playing {
+    background: linear-gradient(135deg, var(--navy-blue), #1A2F45);
+    border-color: var(--navy-blue);
+}
+
+.music-button.playing .music-icon {
+    color: var(--pure-white);
+}
+
+.music-button.playing::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--navy-blue);
+    animation: musicPulse 2s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+}
+
+/* Responsivo para o botão de música */
+@media (max-width: 768px) {
+    .music-button {
+        width: 48px;
+        height: 48px;
+        top: 15px;
+        right: 15px;
+    }
+
+    .music-button .music-icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 /* ===== ANIMAÇÕES ===== */
 @keyframes fadeInUp {
     from {

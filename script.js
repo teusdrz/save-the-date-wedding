@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCarousel();
     initializeSmoothScroll();
     initializeIntersectionObserver();
+    initializeMusicPlayer();
     loadSavedData();
 });
 
@@ -655,3 +656,46 @@ document.querySelectorAll('.color-swatch').forEach(swatch => {
         }
     });
 });
+
+// ===== PLAYER DE MÚSICA =====
+function initializeMusicPlayer() {
+    const musicButton = document.getElementById('musicButton');
+    const audio = document.getElementById('backgroundMusic');
+    const playIcon = document.querySelector('.music-play');
+    const pauseIcon = document.querySelector('.music-pause');
+
+    let isPlaying = false;
+
+    musicButton.addEventListener('click', () => {
+        if (isPlaying) {
+            audio.pause();
+            musicButton.classList.remove('playing');
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            isPlaying = false;
+        } else {
+            audio.play().catch(error => {
+                console.log('Erro ao reproduzir áudio:', error);
+                showNotification('Não foi possível reproduzir a música. Por favor, tente novamente.', 'error');
+            });
+            musicButton.classList.add('playing');
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+            isPlaying = true;
+        }
+    });
+
+    // Adicionar efeito visual quando a música termina (caso não seja loop)
+    audio.addEventListener('ended', () => {
+        musicButton.classList.remove('playing');
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+        isPlaying = false;
+    });
+
+    // Tratar erros de carregamento de áudio
+    audio.addEventListener('error', (e) => {
+        console.error('Erro ao carregar áudio:', e);
+        musicButton.style.display = 'none'; // Esconder botão se não conseguir carregar
+    });
+}
