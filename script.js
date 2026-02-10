@@ -665,23 +665,83 @@ function initializeMusicPlayer() {
     const pauseIcon = document.querySelector('.music-pause');
 
     let isPlaying = false;
+    let userHasInteracted = false;
 
-    musicButton.addEventListener('click', () => {
+    // Função para iniciar a música com som
+    const startMusicWithSound = () => {
+        audio.muted = false; // Desmutar
+        audio.play()
+            .then(() => {
+                musicButton.classList.add('playing');
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                isPlaying = true;
+                console.log('Música iniciada com sucesso!');
+            })
+            .catch(error => {
+                console.log('Erro ao iniciar música:', error);
+            });
+    };
+
+    // Iniciar música mutada imediatamente (permitido pelos navegadores)
+    audio.muted = true;
+    audio.play()
+        .then(() => {
+            console.log('Música iniciada (mutada)');
+            isPlaying = true;
+            // Mostrar ícone de pause desde o início
+            musicButton.classList.add('playing');
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        })
+        .catch(error => {
+            console.log('Erro ao iniciar música mutada:', error);
+        });
+
+    // Desmutar na primeira interação do usuário
+    const handleFirstInteraction = () => {
+        if (!userHasInteracted) {
+            userHasInteracted = true;
+            if (isPlaying && audio.muted) {
+                audio.muted = false;
+                musicButton.classList.add('playing');
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                console.log('Música desmutada após interação do usuário!');
+            }
+        }
+    };
+
+    // Adicionar listeners para primeira interação
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    document.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    // Controle manual do botão
+    musicButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+
         if (isPlaying) {
+            // Pausar música
             audio.pause();
             musicButton.classList.remove('playing');
             playIcon.style.display = 'block';
             pauseIcon.style.display = 'none';
             isPlaying = false;
         } else {
-            audio.play().catch(error => {
-                console.log('Erro ao reproduzir áudio:', error);
-                showNotification('Não foi possível reproduzir a música. Por favor, tente novamente.', 'error');
-            });
-            musicButton.classList.add('playing');
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-            isPlaying = true;
+            // Retomar música
+            audio.muted = false;
+            audio.play()
+                .then(() => {
+                    musicButton.classList.add('playing');
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                    isPlaying = true;
+                })
+                .catch(error => {
+                    console.log('Erro ao reproduzir áudio:', error);
+                    showNotification('Não foi possível reproduzir a música. Por favor, tente novamente.', 'error');
+                });
         }
     });
 
