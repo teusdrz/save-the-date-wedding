@@ -41,7 +41,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeOutEntrance 3s ease-in-out forwards;
+    animation: fadeOutEntrance 7s ease-in-out forwards;
 }
 
 .entrance-overlay::before {
@@ -54,12 +54,12 @@ body {
     background-image:
         radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
     pointer-events: none;
-    animation: pulse 3s ease-in-out;
+    animation: pulse 7s ease-in-out;
 }
 
 .entrance-content {
     text-align: center;
-    animation: entranceContentFade 3s ease-in-out;
+    animation: entranceContentFade 7s ease-in-out;
 }
 
 .entrance-ornament-top,
@@ -69,12 +69,12 @@ body {
 
 .entrance-ornament-top {
     margin-bottom: 2.5rem;
-    animation: ornamentSlideDown 3s ease-in-out;
+    animation: ornamentSlideDown 7s ease-in-out;
 }
 
 .entrance-ornament-bottom {
     margin-top: 2.5rem;
-    animation: ornamentSlideUp 3s ease-in-out;
+    animation: ornamentSlideUp 7s ease-in-out;
 }
 
 .entrance-ornament-top svg,
@@ -82,36 +82,350 @@ body {
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
 }
 
-.entrance-initials {
+/* Estrutura dos nomes */
+.entrance-names {
     font-family: 'Playfair Display', serif;
     font-size: 5.5rem;
     font-weight: 400;
     color: var(--pure-white);
-    letter-spacing: 0.3em;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
+    position: relative;
+    gap: 2rem;
+    letter-spacing: 0.3em;
+    min-height: 150px;
 }
 
-.entrance-initials .initial {
-    animation: initialFadeIn 3s ease-in-out;
+.name-left,
+.name-right {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Nome da esquerda começa centralizado com o & */
+.name-left {
+    animation: moveLeft 7s ease-in-out;
+    justify-content: flex-end;
+    margin-right: 2.5rem;
+}
+
+/* Nome da direita começa centralizado com o & */
+.name-right {
+    animation: moveRight 7s ease-in-out;
+    justify-content: flex-start;
+    margin-left: 2.5rem;
+}
+
+/* Letras iniciais M e F */
+.initial-letter {
     opacity: 0;
     text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    animation: initialAppear 7s ease-in-out;
 }
 
-.entrance-initials .initial:first-child {
-    animation-delay: 0.3s;
+/* Restante dos nomes ATHEUS e LÁVIA */
+.full-name-letters {
+    opacity: 0;
+    letter-spacing: 0.15em;
+    margin-left: 0;
+    animation: nameExpand 7s ease-in-out;
+    display: inline-block;
+    transform-origin: left center;
+    overflow: visible;
+    max-width: 0;
 }
 
-.entrance-initials .initial:last-child {
-    animation-delay: 0.7s;
+.name-right .full-name-letters {
+    transform-origin: left center;
 }
 
-.entrance-initials .ampersand {
+/* Ampersand & - fica sempre FIXO no centro absoluto */
+.ampersand {
     font-size: 4.5rem;
     opacity: 0;
-    animation: ampersandGlow 3s ease-in-out 0.5s;
+    animation: ampersandGlow 7s ease-in-out;
+    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* TIMELINE DA ANIMAÇÃO:
+   0s - 1.5s: M & F aparecem NO CENTRO
+   1.5s - 3s: M vai para ESQUERDA, F vai para DIREITA, nomes completos aparecem (MATHEUS & FLÁVIA)
+   3s - 5s: Nomes completos visíveis
+   5s - 6s: M e F voltam para o CENTRO, nomes desaparecem (M & F)
+   6s - 7s: Fade out e página abre
+*/
+
+@keyframes moveLeft {
+
+    /* M começa na posição normal (separado do &) */
+    0% {
+        transform: translateX(0);
+    }
+
+    15% {
+        transform: translateX(0);
+    }
+
+    /* M se move para a esquerda para dar espaço aos nomes - ESPAÇAMENTO REDUZIDO */
+    25% {
+        transform: translateX(0);
+    }
+
+    40% {
+        transform: translateX(-60px);
+    }
+
+    /* Fica afastado enquanto nomes aparecem */
+    70% {
+        transform: translateX(-60px);
+    }
+
+    /* Volta para posição original (separado do &) */
+    85% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes moveRight {
+
+    /* F começa na posição normal (separado do &) */
+    0% {
+        transform: translateX(0);
+    }
+
+    15% {
+        transform: translateX(0);
+    }
+
+    /* F se move para a direita para dar espaço aos nomes - ESPAÇAMENTO REDUZIDO */
+    25% {
+        transform: translateX(0);
+    }
+
+    40% {
+        transform: translateX(60px);
+    }
+
+    /* Fica afastado enquanto nomes aparecem */
+    70% {
+        transform: translateX(60px);
+    }
+
+    /* Volta para posição original (separado do &) */
+    85% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes initialAppear {
+
+    /* M & F aparecem */
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+
+    15% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Ficam visíveis durante movimento */
+    85% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Fade out */
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+@keyframes nameExpand {
+
+    /* Escondidos no início */
+    0% {
+        opacity: 0;
+        max-width: 0;
+        transform: scaleX(0);
+    }
+
+    25% {
+        opacity: 0;
+        max-width: 0;
+        transform: scaleX(0);
+    }
+
+    /* Expandem conforme M e F se afastam */
+    40% {
+        opacity: 1;
+        max-width: 500px;
+        transform: scaleX(1);
+    }
+
+    /* Ficam visíveis */
+    70% {
+        opacity: 1;
+        max-width: 500px;
+        transform: scaleX(1);
+    }
+
+    /* Contraem quando M e F voltam */
+    85% {
+        opacity: 0;
+        max-width: 0;
+        transform: scaleX(0);
+    }
+
+    /* Desaparecem */
+    100% {
+        opacity: 0;
+        max-width: 0;
+        transform: scaleX(0);
+    }
+}
+
+@keyframes ampersandGlow {
+
+    /* Aparece com M & F - Centro */
+    0% {
+        opacity: 0;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+    }
+
+    15% {
+        opacity: 1;
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+        transform: translate(-50%, -50%);
+    }
+
+    /* Fica visível no centro */
+    25% {
+        opacity: 1;
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+        transform: translate(-50%, -50%);
+    }
+
+    32% {
+        opacity: 1;
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+        transform: translate(-50%, -50%);
+    }
+
+    /* Move suavemente para a direita (em direção à FLÁVIA) */
+    36% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+
+    40% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+
+    45% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+
+    52% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+
+    62% {
+        opacity: 1;
+        color: white;
+        text-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+        transform: translate(-50%, -50%) translateX(40px);
+    }
+
+    /* Continua deslocado */
+    75% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%) translateX(40px);
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+    }
+
+    /* Volta ao centro suavemente */
+    85% {
+        opacity: 1;
+        color: white;
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+        transform: translate(-50%, -50%);
+    }
+
+    92% {
+        opacity: 1;
+        color: white;
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+        transform: translate(-50%, -50%);
+    }
+
+    /* Continua visível até o final no centro */
+    100% {
+        opacity: 1;
+        color: white;
+        transform: translate(-50%, -50%);
+        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
+    }
+}
+
+/* Animação de desenho suave do & como assinatura */
+@keyframes drawAmpersand {
+    0% {
+        background-size: 0% 100%;
+        opacity: 0;
+        filter: blur(4px);
+    }
+
+    10% {
+        opacity: 0.4;
+        filter: blur(3px);
+    }
+
+    30% {
+        opacity: 0.7;
+        filter: blur(1.5px);
+    }
+
+    60% {
+        opacity: 0.9;
+        filter: blur(0.5px);
+    }
+
+    /* Desenha suavemente da esquerda para direita com fade in progressivo */
+    100% {
+        background-size: 100% 100%;
+        opacity: 1;
+        filter: blur(0px);
+    }
 }
 
 @keyframes fadeOutEntrance {
@@ -137,12 +451,12 @@ body {
         transform: scale(0.95);
     }
 
-    30% {
+    15% {
         opacity: 1;
         transform: scale(1);
     }
 
-    70% {
+    85% {
         opacity: 1;
         transform: scale(1);
     }
@@ -159,12 +473,12 @@ body {
         transform: translateY(-30px);
     }
 
-    30% {
+    15% {
         opacity: 1;
         transform: translateY(0);
     }
 
-    70% {
+    85% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -181,12 +495,12 @@ body {
         transform: translateY(30px);
     }
 
-    30% {
+    15% {
         opacity: 1;
         transform: translateY(0);
     }
 
-    70% {
+    85% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -194,58 +508,6 @@ body {
     100% {
         opacity: 0;
         transform: translateY(20px);
-    }
-}
-
-@keyframes initialFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    35% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    70% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-}
-
-@keyframes ampersandGlow {
-    0% {
-        opacity: 0;
-        transform: scale(0.8);
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    }
-
-    35% {
-        opacity: 1;
-        transform: scale(1);
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-    }
-
-    50% {
-        text-shadow: 0 0 80px rgba(255, 255, 255, 0.9);
-    }
-
-    70% {
-        opacity: 1;
-        transform: scale(1);
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(1.2);
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
 }
 
@@ -916,6 +1178,214 @@ h4 {
     letter-spacing: 0.05em;
 }
 
+/* ===== CRONÔMETRO DE CONFIRMAÇÃO ===== */
+.confirmation-timer {
+    background: linear-gradient(135deg, rgba(10, 25, 41, 0.02) 0%, rgba(10, 25, 41, 0.04) 100%);
+    border: 2px solid var(--navy-blue);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin: 2rem 0 3rem;
+    box-shadow: 0 8px 30px rgba(10, 25, 41, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.confirmation-timer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy-blue), var(--accent-gold), var(--navy-blue));
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.timer-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.timer-icon svg {
+    color: var(--navy-blue);
+    animation: tick 2s ease-in-out infinite;
+}
+
+@keyframes tick {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+}
+
+.timer-content {
+    text-align: center;
+}
+
+.timer-content h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy-blue);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.timer-subtitle {
+    font-size: 1rem;
+    color: var(--light-navy);
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
+
+.timer-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.timer-box {
+    background: white;
+    border: 2px solid var(--navy-blue);
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+    min-width: 100px;
+    box-shadow: 0 4px 15px rgba(10, 25, 41, 0.1);
+    transition: var(--transition-smooth);
+}
+
+.timer-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(10, 25, 41, 0.15);
+}
+
+.timer-number {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.timer-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--light-navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+}
+
+.timer-separator {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--navy-blue);
+    font-weight: 700;
+    margin: 0 0.5rem;
+}
+
+/* Animação de urgência para últimas 24 horas */
+.timer-display.timer-urgent .timer-box {
+    border-color: #c41e3a;
+    animation: pulse-urgent 2s ease-in-out infinite;
+}
+
+.timer-display.timer-urgent .timer-number {
+    color: #c41e3a;
+}
+
+.timer-display.timer-urgent .timer-separator {
+    color: #c41e3a;
+}
+
+@keyframes pulse-urgent {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(196, 30, 58, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 8px 30px rgba(196, 30, 58, 0.4);
+    }
+}
+
+/* ===== MENSAGEM DE PRAZO ENCERRADO ===== */
+.expired-message {
+    background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(196, 30, 58, 0.08) 100%);
+    border: 2px solid #c41e3a;
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    margin: 2rem 0;
+    box-shadow: 0 8px 30px rgba(196, 30, 58, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.expired-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(196, 30, 58, 0.2);
+}
+
+.expired-icon svg {
+    color: #c41e3a;
+}
+
+.expired-message h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #c41e3a;
+    margin: 0;
+    font-weight: 600;
+}
+
+.expired-message p {
+    font-size: 1.1rem;
+    color: var(--navy-blue);
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.expired-contact {
+    font-weight: 500;
+    color: var(--light-navy);
+    margin-top: 1rem !important;
+}
+
 /* Aviso Importante */
 .rsvp-important-notice {
     background: linear-gradient(135deg, rgba(10, 25, 41, 0.03) 0%, rgba(10, 25, 41, 0.05) 100%);
@@ -1490,6 +1960,142 @@ h4 {
 
 .modal-btn-confirm svg {
     fill: white;
+}
+
+/* ===== MODAL DE IDENTIFICAÇÃO ===== */
+.identification-modal {
+    z-index: 10002;
+}
+
+.identification-content {
+    max-width: 550px;
+}
+
+.identification-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 2.5rem 2rem 1.5rem;
+    border-bottom: none;
+}
+
+.identification-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--navy-blue), var(--light-navy));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(10, 25, 41, 0.2);
+}
+
+.identification-icon svg {
+    color: white;
+    width: 40px;
+    height: 40px;
+}
+
+.identification-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.identification-subtitle {
+    color: var(--light-navy);
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 300;
+}
+
+.identification-body {
+    padding: 2rem;
+}
+
+.identification-body .modal-form-group select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid rgba(10, 25, 41, 0.2);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+}
+
+.identification-body .modal-form-group select:focus {
+    outline: none;
+    border-color: var(--navy-blue);
+    box-shadow: 0 0 0 3px rgba(10, 25, 41, 0.1);
+}
+
+.identification-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(10, 25, 41, 0.03), rgba(10, 25, 41, 0.05));
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--navy-blue);
+    margin-top: 1.5rem;
+}
+
+.identification-notice svg {
+    color: var(--navy-blue);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.identification-notice p {
+    margin: 0;
+    color: var(--navy-blue);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.identification-modal .modal-footer {
+    justify-content: center;
+    padding: 1.5rem 2rem 2rem;
+}
+
+.identification-modal .modal-btn-confirm {
+    background: var(--navy-blue);
+    padding: 1.2rem 3rem;
+    font-size: 1.1rem;
+}
+
+.identification-modal .modal-btn-confirm:hover {
+    background: var(--light-navy);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(10, 25, 41, 0.3);
+}
+
+/* Mensagem de nome bloqueado no formulário */
+.locked-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(10, 25, 41, 0.05), rgba(10, 25, 41, 0.08));
+    border-left: 3px solid var(--navy-blue);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--navy-blue);
+}
+
+.locked-message svg {
+    color: var(--navy-blue);
+    flex-shrink: 0;
+}
+
+.locked-message strong {
+    font-weight: 600;
+    color: var(--navy-blue);
 }
 
 /* ===== DETAILS SECTION ===== */
@@ -2171,9 +2777,81 @@ h4 {
 }
 
 /* ===== RESPONSIVIDADE ===== */
+
+/* Para tablets grandes e desktops pequenos */
+@media (max-width: 1024px) {
+    .entrance-names {
+        font-size: 4.5rem;
+        gap: 1.5rem;
+    }
+
+    .ampersand {
+        font-size: 4rem;
+    }
+}
+
+/* Para tablets em modo retrato */
 @media (max-width: 768px) {
     .rsvp-form {
         padding: 2rem 1.5rem;
+    }
+
+    /* Cronômetro responsivo */
+    .confirmation-timer {
+        padding: 2rem 1.5rem;
+    }
+
+    .timer-content h4 {
+        font-size: 1.5rem;
+    }
+
+    .timer-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .timer-display {
+        gap: 0.5rem;
+    }
+
+    .timer-box {
+        min-width: 70px;
+        padding: 1rem 0.5rem;
+    }
+
+    .timer-number {
+        font-size: 2rem;
+    }
+
+    .timer-label {
+        font-size: 0.7rem;
+    }
+
+    .timer-separator {
+        font-size: 1.8rem;
+        margin: 0 0.2rem;
+    }
+
+    /* Mensagem de expiração responsiva */
+    .expired-message {
+        padding: 2rem 1.5rem;
+    }
+
+    .expired-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .expired-icon svg {
+        width: 60px;
+        height: 60px;
+    }
+
+    .expired-message h3 {
+        font-size: 1.5rem;
+    }
+
+    .expired-message p {
+        font-size: 1rem;
     }
 
     .guest-filter-buttons {
@@ -2229,6 +2907,17 @@ h4 {
         height: 70px;
     }
 
+    /* Mobile: Mostrar nome da cor ao tocar */
+    .color-swatch:active::after,
+    .color-swatch.active::after {
+        opacity: 1;
+    }
+
+    .color-swatch:active {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
     .palette-section {
         padding: 1.5rem;
     }
@@ -2262,6 +2951,45 @@ h4 {
     .modal-btn {
         width: 100%;
         justify-content: center;
+    }
+
+    /* Modal de identificação responsivo */
+    .identification-content {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .identification-header {
+        padding: 2rem 1.5rem 1rem;
+    }
+
+    .identification-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+    }
+
+    .identification-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .identification-header h3 {
+        font-size: 1.6rem;
+    }
+
+    .identification-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .identification-body {
+        padding: 1.5rem;
+    }
+
+    .locked-message {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
     }
 
     .story-block {
@@ -2301,6 +3029,176 @@ h4 {
     .story-section::after {
         display: none;
     }
+
+    /* ===== AJUSTES ANIMAÇÃO DE ENTRADA PARA MOBILE ===== */
+    .entrance-names {
+        font-size: 3rem;
+        gap: 0.8rem;
+        letter-spacing: 0.15em;
+        min-height: 100px;
+        padding: 0 0.5rem;
+        overflow: visible;
+    }
+
+    .name-left,
+    .name-right {
+        overflow: visible;
+    }
+
+    .name-left {
+        margin-right: 2rem;
+    }
+
+    .name-right {
+        margin-left: 2rem;
+    }
+
+    .ampersand {
+        font-size: 2.5rem;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .initial-letter {
+        font-size: 1em;
+        display: inline-block;
+    }
+
+    .full-name-letters {
+        font-size: 0.85em;
+        overflow: visible;
+        max-width: none;
+    }
+
+    /* Ajustar movimentos para telas menores - mantém as letras visíveis */
+    @keyframes moveLeft {
+        0% {
+            transform: translateX(0);
+        }
+
+        15% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(0);
+        }
+
+        40% {
+            transform: translateX(-35px);
+        }
+
+        70% {
+            transform: translateX(-35px);
+        }
+
+        85% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveRight {
+        0% {
+            transform: translateX(0);
+        }
+
+        15% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(0);
+        }
+
+        40% {
+            transform: translateX(35px);
+        }
+
+        70% {
+            transform: translateX(35px);
+        }
+
+        85% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    /* Garantir que as letras iniciais apareçam */
+    @keyframes initialAppear {
+        0% {
+            opacity: 0;
+            transform: scale(1);
+        }
+
+        15% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        85% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+
+    /* Garantir expansão dos nomes completos */
+    @keyframes nameExpand {
+        0% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        25% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        40% {
+            opacity: 1;
+            max-width: 300px;
+            transform: scaleX(1);
+        }
+
+        70% {
+            opacity: 1;
+            max-width: 300px;
+            transform: scaleX(1);
+        }
+
+        85% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        100% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+    }
+
+    .entrance-ornament-top svg,
+    .entrance-ornament-bottom svg {
+        width: 80px;
+        height: 30px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2317,6 +3215,51 @@ h4 {
 
     .rsvp-form {
         padding: 2rem 1rem;
+    }
+
+    /* Cronômetro para telas muito pequenas */
+    .confirmation-timer {
+        padding: 1.5rem 1rem;
+    }
+
+    .timer-content h4 {
+        font-size: 1.3rem;
+    }
+
+    .timer-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .timer-box {
+        min-width: 60px;
+        padding: 0.8rem 0.3rem;
+    }
+
+    .timer-number {
+        font-size: 1.5rem;
+    }
+
+    .timer-label {
+        font-size: 0.65rem;
+    }
+
+    .timer-separator {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    /* Mensagem de expiração para telas pequenas */
+    .expired-message {
+        padding: 1.5rem 1rem;
+    }
+
+    .expired-message h3 {
+        font-size: 1.3rem;
+    }
+
+    .expired-message p {
+        font-size: 0.95rem;
     }
 
     .dresscode-card {
@@ -2339,6 +3282,171 @@ h4 {
     .entrance-ornament-top,
     .entrance-ornament-bottom {
         margin: 1.5rem 0;
+    }
+
+    /* ===== AJUSTES ANIMAÇÃO ENTRADA PARA TELAS MUITO PEQUENAS ===== */
+    .entrance-names {
+        font-size: 2.2rem;
+        gap: 0.5rem;
+        letter-spacing: 0.1em;
+        min-height: 80px;
+        padding: 0 1rem;
+        overflow: visible;
+    }
+
+    .name-left {
+        margin-right: 1.5rem;
+    }
+
+    .name-right {
+        margin-left: 1.5rem;
+    }
+
+    .ampersand {
+        font-size: 2rem;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .initial-letter {
+        font-size: 1em;
+        display: inline-block;
+    }
+
+    .full-name-letters {
+        font-size: 0.8em;
+        overflow: visible;
+        letter-spacing: 0.08em;
+    }
+
+    /* Movimentos ainda menores para telas pequenas */
+    @keyframes moveLeft {
+        0% {
+            transform: translateX(0);
+        }
+
+        15% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(0);
+        }
+
+        40% {
+            transform: translateX(-25px);
+        }
+
+        70% {
+            transform: translateX(-25px);
+        }
+
+        85% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes moveRight {
+        0% {
+            transform: translateX(0);
+        }
+
+        15% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(0);
+        }
+
+        40% {
+            transform: translateX(25px);
+        }
+
+        70% {
+            transform: translateX(25px);
+        }
+
+        85% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(0);
+        }
+    }
+
+    /* Garantir que as letras iniciais apareçam em mobile pequeno */
+    @keyframes initialAppear {
+        0% {
+            opacity: 0;
+            transform: scale(1);
+        }
+
+        15% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        85% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+
+    /* Nomes completos com max-width ajustado */
+    @keyframes nameExpand {
+        0% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        25% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        40% {
+            opacity: 1;
+            max-width: 200px;
+            transform: scaleX(1);
+        }
+
+        70% {
+            opacity: 1;
+            max-width: 200px;
+            transform: scaleX(1);
+        }
+
+        85% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+
+        100% {
+            opacity: 0;
+            max-width: 0;
+            transform: scaleX(0);
+        }
+    }
+
+    .entrance-ornament-top svg,
+    .entrance-ornament-bottom svg {
+        width: 60px;
+        height: 25px;
     }
 }
 

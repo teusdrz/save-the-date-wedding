@@ -24,10 +24,16 @@
                     <circle cx="50" cy="15" r="2" fill="white" opacity="0.5" />
                 </svg>
             </div>
-            <div class="entrance-initials">
-                <span class="initial">M</span>
+            <div class="entrance-names">
+                <div class="name-left">
+                    <span class="initial-letter">M</span>
+                    <span class="full-name-letters">ATHEUS</span>
+                </div>
                 <span class="ampersand">&</span>
-                <span class="initial">F</span>
+                <div class="name-right">
+                    <span class="initial-letter">F</span>
+                    <span class="full-name-letters">LÁVIA</span>
+                </div>
             </div>
             <div class="entrance-ornament-bottom">
                 <svg width="100" height="30" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -322,6 +328,43 @@
             </div>
             <p class="rsvp-subtitle">Sua presença é fundamental para tornar este dia ainda mais especial</p>
 
+            <!-- Cronômetro de Confirmação -->
+            <div id="confirmationTimer" class="confirmation-timer">
+                <div class="timer-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="13" r="9" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M12 9V13L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M9 2H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="timer-content">
+                    <h4>Prazo para Confirmação</h4>
+                    <p class="timer-subtitle">Você tem 1 semana a partir do seu primeiro acesso para confirmar presença
+                    </p>
+                    <div class="timer-display">
+                        <div class="timer-box">
+                            <span id="days" class="timer-number">0</span>
+                            <span class="timer-label">Dias</span>
+                        </div>
+                        <div class="timer-separator">:</div>
+                        <div class="timer-box">
+                            <span id="hours" class="timer-number">0</span>
+                            <span class="timer-label">Horas</span>
+                        </div>
+                        <div class="timer-separator">:</div>
+                        <div class="timer-box">
+                            <span id="minutes" class="timer-number">0</span>
+                            <span class="timer-label">Minutos</span>
+                        </div>
+                        <div class="timer-separator">:</div>
+                        <div class="timer-box">
+                            <span id="seconds" class="timer-number">0</span>
+                            <span class="timer-label">Segundos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Aviso Importante -->
             <div class="rsvp-important-notice">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -435,6 +478,10 @@
                             <option value="convidado-marcos">Marcos</option>
                             <option value="convidado-miss-maria">Miss. Maria</option>
                             <option value="convidado-anna">Anna</option>
+                            <option value="convidado-dona-elsa">Dona Elsa</option>
+                            <option value="convidado-senhor-wilson">Senhor Wilson</option>
+                            <option value="convidado-sandra">Sandra</option>
+                            <option value="convidado-mayara">Mayara</option>
                         </optgroup>
                         <optgroup label="Convidados Familiares" data-category="familia">
                             <option value="familia-flavia">Família - Flávia</option>
@@ -516,6 +563,20 @@
                 <p>Obrigado por confirmar sua presença. Estamos ansiosos para celebrar este momento especial com você!
                 </p>
             </div>
+
+            <!-- Mensagem de Prazo Encerrado -->
+            <div id="expiredMessage" class="expired-message" style="display: none;">
+                <div class="expired-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M12 8V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <circle cx="12" cy="16" r="0.5" fill="currentColor" />
+                    </svg>
+                </div>
+                <h3>Prazo de Confirmação Encerrado</h3>
+                <p>O período de 1 semana para confirmação de presença foi encerrado.</p>
+                <p class="expired-contact">Para mais informações, entre em contato com os noivos.</p>
+            </div>
         </div>
     </section>
 
@@ -547,6 +608,116 @@
                             fill="currentColor" />
                     </svg>
                     Confirmar via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Identificação do Convidado -->
+    <div id="identificationModal" class="modal identification-modal">
+        <div class="modal-content identification-content">
+            <div class="modal-header identification-header">
+                <div class="identification-icon">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M4 20C4 16.134 7.58172 13 12 13C16.4183 13 20 16.134 20 20" stroke="currentColor"
+                            stroke-width="1.5" />
+                    </svg>
+                </div>
+                <h3>Bem-vindo(a)!</h3>
+                <p class="identification-subtitle">Para continuar, por favor selecione seu nome</p>
+            </div>
+            <div class="modal-body identification-body">
+                <div class="modal-form-group">
+                    <label for="userIdentification">Qual é o seu nome?</label>
+                    <select id="userIdentification" required>
+                        <option value="">Selecione seu nome...</option>
+                        <optgroup label="Convidados">
+                            <option value="convidado-Pr.Leandro">Leandro Cassia</option>
+                            <option value="convidado-Pr.Ivan">Pr.Ivan</option>
+                            <option value="convidado-Pr.Simone">Simone</option>
+                            <option value="convidado-Pr.Malta">Malta</option>
+                            <option value="convidado-Pr.Dani">Dani</option>
+                            <option value="convidado-Beatriz">Beatriz</option>
+                            <option value="convidado-Renato Baterista">Renato</option>
+                            <option value="convidado-evenly">Evenly</option>
+                            <option value="convidado-denise">Denise</option>
+                            <option value="convidado-vinicius">Vinicius</option>
+                            <option value="convidado-herikelly">Herikelly</option>
+                            <option value="convidado-douglas">Douglas</option>
+                            <option value="convidado-Esposa-do-douglas">Esposa do Douglas</option>
+                            <option value="convidado-Tairiny">Tairiny</option>
+                            <option value="convidado-tarcisio">Tarcisio</option>
+                            <option value="convidado-pedro">Pedro</option>
+                            <option value="convidado-michael">Michael Santos</option>
+                            <option value="convidado-edivania">Edivania</option>
+                            <option value="convidado-aryana">Aryana</option>
+                            <option value="convidado-luciano">Luciano</option>
+                            <option value="convidado-vivy">Vivy</option>
+                            <option value="convidado-claudia">Claudia</option>
+                            <option value="convidado-cleide">Cleide</option>
+                            <option value="convidado-marcos">Marcos</option>
+                            <option value="convidado-miss-maria">Miss. Maria</option>
+                            <option value="convidado-anna">Anna</option>
+                            <option value="convidado-dona-elsa">Dona Elsa</option>
+                            <option value="convidado-senhor-wilson">Senhor Wilson</option>
+                            <option value="convidado-sandra">Sandra</option>
+                            <option value="convidado-mayara">Mayara</option>
+                        </optgroup>
+                        <optgroup label="Convidados Familiares">
+                            <option value="familia-flavia">Família - Flávia</option>
+                            <option value="familia-zelma">Zelma Nascimento</option>
+                            <option value="familia-daiana">Daiana Nascimento</option>
+                            <option value="familia-daniela">Daniela Nascimento</option>
+                            <option value="familia-deyze">Deyze Nascimento</option>
+                            <option value="familia-felipe">Felipe</option>
+                            <option value="familia-herbert">Herbert</option>
+                            <option value="familia-jone">Jone Alves</option>
+                            <option value="familia-paula">Paula Regina</option>
+                            <option value="familia-danylo">Danylo</option>
+                            <option value="familia-jessica">Jéssica</option>
+                            <option value="familia-joyce">Joyce</option>
+                            <option value="familia-welligton">Welligton</option>
+                            <option value="familia-joao">João</option>
+                            <option value="familia-claudia2">Claudia</option>
+                            <option value="familia-lucia">Lucia</option>
+                            <option value="familia-wilson">Wilson</option>
+                        </optgroup>
+                        <optgroup label="Madrinhas - Flávia">
+                            <option value="madrinha-sthefanie">Sthefanie</option>
+                            <option value="madrinha-marina">Marina</option>
+                            <option value="madrinha-giovanna">Giovanna</option>
+                            <option value="madrinha-ingrid">Ingrid Regina</option>
+                            <option value="madrinha-thais">Thais</option>
+                            <option value="madrinha-camila">Camila</option>
+                            <option value="madrinha-tina">Tina</option>
+                        </optgroup>
+                        <optgroup label="Padrinhos - Matheus">
+                            <option value="padrinho-gabe">Gabe</option>
+                            <option value="padrinho-david">David</option>
+                            <option value="padrinho-felipp">Felipp Nolasco</option>
+                            <option value="padrinho-marcio">Marcio</option>
+                            <option value="padrinho-fabinho">Fabinho</option>
+                            <option value="padrinho-edson">Edson</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="identification-notice">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M12 7V13M12 16H12.01" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" />
+                    </svg>
+                    <p>Você só poderá confirmar presença para o nome selecionado</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-confirm" id="confirmIdentification">
+                    <span>Continuar</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -584,7 +755,7 @@
                     </div>
                     <h4>Data</h4>
                     <p class="detail-text">06 • Novembro • 2026</p>
-                    <p class="detail-subtext">Horário: 18h00</p>
+                    <p class="detail-subtext">Horário: 15h30</p>
                 </div>
 
                 <div class="detail-card">
@@ -675,25 +846,13 @@
             <!-- Color Palettes -->
             <div class="color-palettes">
                 <div class="palette-section">
-                    <h4 class="palette-title">Paleta de Cores - Convidados</h4>
-                    <p class="palette-description">Sugestão de cores elegantes para os convidados</p>
-                    <div class="color-swatches">
-                        <div class="color-swatch" style="background: #001969;" title="Azul Marinho"></div>
-                        <div class="color-swatch" style="background: #2E5090;" title="Azul Real"></div>
-                        <div class="color-swatch" style="background: #4169B8;" title="Azul Médio"></div>
-                        <div class="color-swatch" style="background: #6B8FD8;" title="Azul Claro"></div>
-                        <div class="color-swatch" style="background: #003049;" title="Azul Escuro"></div>
-                    </div>
-                </div>
-
-                <div class="palette-section">
                     <h4 class="palette-title">Paleta de Cores - Madrinhas</h4>
                     <p class="palette-description">Cores exclusivas para as madrinhas da Flávia</p>
                     <div class="color-swatches">
-                        <div class="color-swatch" style="background: #4A6FA5;" title="Azul Aço"></div>
-                        <div class="color-swatch" style="background: #5B7DB1;" title="Azul Suave"></div>
-                        <div class="color-swatch" style="background: #6A8DC6;" title="Azul Celeste"></div>
-                        <div class="color-swatch" style="background: #7A9DD8;" title="Azul Serenity"></div>
+                        <div class="color-swatch" style="background: #87CEEB;" title="Azul Céu Suave"></div>
+                        <div class="color-swatch" style="background: #7FB3D5;" title="Azul Claro Delicado"></div>
+                        <div class="color-swatch" style="background: #6FA8DC;" title="Azul Serenity"></div>
+                        <div class="color-swatch" style="background: #A4C8E1;" title="Azul Pastel"></div>
                     </div>
                 </div>
 
@@ -701,19 +860,20 @@
                     <h4 class="palette-title">Paleta de Cores - Padrinhos</h4>
                     <p class="palette-description">Cores exclusivas para os padrinhos do Matheus</p>
                     <div class="color-swatches">
-                        <div class="color-swatch" style="background: #000080;" title="Navy Blue"></div>
-                        <div class="color-swatch" style="background: #003366;" title="Prussian Blue"></div>
-                        <div class="color-swatch" style="background: #001F3F;" title="Oxford Blue"></div>
-                        <div class="color-swatch" style="background: #0A1929;" title="Dark Navy"></div>
+                        <div class="color-swatch" style="background: #2C5F8D;" title="Azul Intermediário"></div>
+                        <div class="color-swatch" style="background: #2E6FA8;" title="Azul Médio"></div>
+                        <div class="color-swatch" style="background: #3A7BC8;" title="Azul Royal"></div>
+                        <div class="color-swatch" style="background: #1F5180;" title="Azul Profundo"></div>
                     </div>
                 </div>
 
                 <div class="palette-section">
-                    <h4 class="palette-title">Paleta de Cores - Pais</h4>
+                    <h4 class="palette-title">Paleta de Cores - Pais dos Noivos</h4>
                     <p class="palette-description">Cores reservadas para os pais dos noivos</p>
                     <div class="color-swatches">
-                        <div class="color-swatch" style="background: #0A1929;" title="Azul Marinho Imperial"></div>
-                        <div class="color-swatch" style="background: #112240;" title="Midnight Blue"></div>
+                        <div class="color-swatch" style="background: #003D6B;" title="Azul Forte"></div>
+                        <div class="color-swatch" style="background: #004880;" title="Azul Elegante"></div>
+                        <div class="color-swatch" style="background: #003559;" title="Azul Imperial"></div>
                     </div>
                 </div>
             </div>
