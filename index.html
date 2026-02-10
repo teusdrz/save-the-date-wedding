@@ -12,6 +12,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap"
         rel="stylesheet">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -711,6 +713,111 @@
             </div>
         </div>
     </section>
+
+    <!-- Lista de Presentes Section -->
+    <section class="gift-section">
+        <div class="gift-container">
+            <div class="section-title-container">
+                <div class="ornament-line"></div>
+                <h3 class="section-title">Lista de Presentes</h3>
+                <div class="ornament-line"></div>
+            </div>
+
+            <p class="gift-subtitle">Sua presença é o nosso maior presente, mas se desejar nos presentear,
+                ficaremos felizes em receber uma contribuição para realizar nossos sonhos</p>
+
+            <!-- Ornamento decorativo imperial -->
+            <div class="imperial-divider">
+                <svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="20" y1="30" x2="75" y2="30" stroke="currentColor" stroke-width="1.5" opacity="0.4" />
+                    <line x1="125" y1="30" x2="180" y2="30" stroke="currentColor" stroke-width="1.5" opacity="0.4" />
+                    <circle cx="100" cy="30" r="12" stroke="currentColor" stroke-width="1.5" fill="none"
+                        opacity="0.5" />
+                    <circle cx="100" cy="30" r="6" fill="currentColor" opacity="0.3" />
+                    <path d="M88 18L100 30L112 18" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none" />
+                    <path d="M88 42L100 30L112 42" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none" />
+                </svg>
+            </div>
+
+            <div class="gift-options">
+                <div class="gift-card">
+                    <div class="gift-icon">
+                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 25H45V50H15V25Z" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M12 25H48V30H12V25Z" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M30 25V50" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M22 18C22 18 25 15 30 18C35 15 38 18 38 18" stroke="currentColor"
+                                stroke-width="1.5" />
+                            <circle cx="24" cy="18" r="3" stroke="currentColor" stroke-width="1.5" />
+                            <circle cx="36" cy="18" r="3" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                    </div>
+                    <h4>PIX</h4>
+                    <p class="gift-description">Contribua com o valor que desejar via PIX</p>
+                    <button class="gift-btn" onclick="openPixModal()">
+                        <span>Ver Chave PIX</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal PIX -->
+    <div id="pixModal" class="modal pix-modal">
+        <div class="modal-content pix-content">
+            <div class="modal-header">
+                <h3>Contribuir via PIX</h3>
+                <button class="modal-close" onclick="closePixModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body pix-body">
+                <div class="pix-ornament">
+                    <svg width="80" height="30" viewBox="0 0 80 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 15C5 15 20 5 40 15C60 25 75 15 75 15" stroke="currentColor" stroke-width="0.5"
+                            opacity="0.4" />
+                    </svg>
+                </div>
+
+                <div class="pix-qrcode" id="pixQRCode">
+                    <!-- QR Code será inserido aqui via JavaScript -->
+                </div>
+
+                <div class="pix-info">
+                    <p class="pix-label">Chave PIX (CPF):</p>
+                    <div class="pix-key-container">
+                        <code class="pix-key" id="pixKey">***.***.218-81</code>
+                        <button class="copy-btn" onclick="copyPixKey()" id="copyBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="7" y="7" width="10" height="10" stroke="currentColor" stroke-width="1.5" />
+                                <path d="M13 7V5C13 4 12 3 11 3H5C4 3 3 4 3 5V11C3 12 4 13 5 13H7" stroke="currentColor"
+                                    stroke-width="1.5" />
+                            </svg>
+                            <span>Copiar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pix-message">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="1.5"
+                            stroke-linejoin="round" />
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                    </svg>
+                    <p>Sua contribuição será muito especial para nós e nos ajudará a construir nosso futuro juntos! 💙
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Dress Code Section -->
     <section class="dresscode-section">

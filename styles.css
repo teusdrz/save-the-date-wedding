@@ -2719,6 +2719,269 @@ h4 {
     font-weight: 300;
 }
 
+/* ===== LISTA DE PRESENTES ===== */
+.gift-section {
+    padding: 6rem 2rem;
+    background: linear-gradient(to bottom, var(--pure-white) 0%, var(--off-white) 100%);
+    position: relative;
+}
+
+.gift-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.gift-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--navy-blue);
+    opacity: 0.8;
+    max-width: 700px;
+    margin: 2rem auto 3rem;
+    line-height: 1.8;
+}
+
+.gift-options {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.gift-card {
+    background: var(--pure-white);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    box-shadow: var(--shadow-elegant);
+    transition: var(--transition-smooth);
+    text-align: center;
+    max-width: 380px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gift-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--navy-blue), transparent);
+    opacity: 0;
+    transition: var(--transition-smooth);
+}
+
+.gift-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
+}
+
+.gift-card:hover::before {
+    opacity: 1;
+}
+
+.gift-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    color: var(--navy-blue);
+    opacity: 0.9;
+}
+
+.gift-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy-blue);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.gift-description {
+    font-size: 1rem;
+    color: var(--navy-blue);
+    opacity: 0.7;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.gift-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: var(--navy-blue);
+    color: var(--pure-white);
+    border: none;
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    letter-spacing: 0.05em;
+}
+
+.gift-btn:hover {
+    background: var(--light-navy);
+    transform: translateX(5px);
+    box-shadow: 0 8px 20px rgba(10, 25, 41, 0.3);
+}
+
+.gift-btn svg {
+    transition: var(--transition-smooth);
+}
+
+.gift-btn:hover svg {
+    transform: translateX(5px);
+}
+
+/* ===== MODAL PIX ===== */
+.pix-modal .modal-content {
+    max-width: 500px;
+}
+
+.pix-content {
+    border-top: 4px solid var(--navy-blue);
+}
+
+.pix-body {
+    padding: 2rem;
+}
+
+.pix-ornament {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--navy-blue);
+    opacity: 0.3;
+}
+
+.pix-qrcode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: var(--pure-white);
+    border-radius: 15px;
+    box-shadow: inset 0 2px 10px rgba(10, 25, 41, 0.05);
+    min-height: 280px;
+}
+
+.pix-qrcode canvas {
+    border-radius: 10px;
+}
+
+.pix-info {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.pix-label {
+    font-size: 0.9rem;
+    color: var(--navy-blue);
+    opacity: 0.7;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.pix-key-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.pix-key {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: var(--navy-blue);
+    background: var(--off-white);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    border: 2px solid rgba(10, 25, 41, 0.1);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--navy-blue);
+    color: var(--pure-white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.copy-btn:hover {
+    background: var(--light-navy);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(10, 25, 41, 0.2);
+}
+
+.copy-btn.copied {
+    background: #28a745;
+}
+
+.pix-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--off-white);
+    border-radius: 12px;
+    border-left: 4px solid var(--navy-blue);
+    margin-top: 2rem;
+}
+
+.pix-message svg {
+    flex-shrink: 0;
+    color: var(--navy-blue);
+    margin-top: 0.2rem;
+}
+
+.pix-message p {
+    font-size: 0.95rem;
+    color: var(--navy-blue);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsivo - Lista de Presentes */
+@media (max-width: 768px) {
+    .gift-section {
+        padding: 4rem 1.5rem;
+    }
+
+    .gift-options {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gift-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pix-key-container {
+        flex-direction: column;
+    }
+
+    .pix-key {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
 /* ===== BOTÃO DE MÚSICA FLUTUANTE ===== */
 .music-button {
     position: fixed;
