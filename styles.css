@@ -3003,7 +3003,10 @@ h4 {
 
 /* ===== MODAL PIX ===== */
 .pix-modal .modal-content {
-    max-width: 500px;
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .pix-content {
@@ -3011,26 +3014,248 @@ h4 {
 }
 
 .pix-body {
-    padding: 3rem 2rem;
+    padding: 2rem 2.5rem;
+}
+
+/* Seletor de Finalidade */
+.pix-purpose-selector {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--off-white);
+    border-radius: 12px;
+    border: 2px solid rgba(10, 25, 41, 0.1);
+}
+
+.pix-purpose-label {
+    font-size: 0.95rem;
+    color: var(--navy-blue);
+    opacity: 0.8;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-align: center;
+}
+
+.pix-purpose-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.purpose-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.8rem 0.6rem;
+    background: var(--pure-white);
+    color: var(--navy-blue);
+    border: 2px solid rgba(10, 25, 41, 0.2);
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-height: 75px;
+}
+
+.purpose-btn:hover {
+    border-color: var(--navy-blue);
+    background: rgba(10, 25, 41, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 25, 41, 0.15);
+}
+
+.purpose-btn.active {
+    background: var(--navy-blue);
+    color: var(--pure-white);
+    border-color: var(--navy-blue);
+    box-shadow: 0 4px 15px rgba(10, 25, 41, 0.3);
+}
+
+.purpose-btn svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.purpose-btn.active svg {
+    stroke: var(--pure-white);
+}
+
+.selected-purpose-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--navy-blue);
+    opacity: 0.9;
+    margin-top: 0.5rem;
+}
+
+.selected-purpose-text strong {
+    color: var(--navy-blue);
+    font-weight: 700;
+}
+
+/* Barras de Progresso */
+.progress-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--pure-white);
+    border-radius: 10px;
+    border: 2px solid rgba(10, 25, 41, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.progress-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(10, 25, 41, 0.1);
+}
+
+.progress-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.progress-item.completed {
+    opacity: 0.5;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--navy-blue);
+}
+
+.progress-value {
+    font-size: 0.75rem;
+    color: var(--navy-blue);
+    opacity: 0.7;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(10, 25, 41, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.3rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy-blue), var(--light-navy));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-item.completed .progress-fill {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.progress-percent {
+    font-size: 0.75rem;
+    color: var(--navy-blue);
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+/* Formulário de Contribuição */
+.contribution-form {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: #e8f5e9;
+    border-radius: 12px;
+    border: 2px solid #4caf50;
+}
+
+.contribution-label {
+    font-size: 0.9rem;
+    color: var(--navy-blue);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.contribution-input-group {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.contribution-input {
+    flex: 1;
+    min-width: 150px;
+    max-width: 200px;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: 2px solid var(--navy-blue);
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+.contribution-input:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.contribution-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.contribution-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .pix-ornament {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     color: var(--navy-blue);
     opacity: 0.3;
 }
 
 .pix-info {
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     text-align: center;
 }
 
 .pix-label {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--navy-blue);
     opacity: 0.8;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -3038,19 +3263,20 @@ h4 {
 
 .pix-key-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .pix-key {
     font-family: 'Courier New', monospace;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--navy-blue);
     background: var(--off-white);
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     border-radius: 12px;
     border: 2px solid var(--navy-blue);
     font-weight: 700;
@@ -3061,14 +3287,14 @@ h4 {
 .copy-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 1rem 2.5rem;
+    gap: 0.6rem;
+    padding: 1rem 2rem;
     background: var(--navy-blue);
     color: var(--pure-white);
     border: none;
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition-smooth);
@@ -3090,25 +3316,27 @@ h4 {
 .pix-message {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: 0.8rem;
+    padding: 1.2rem;
     background: var(--off-white);
     border-radius: 12px;
     border-left: 4px solid var(--navy-blue);
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .pix-message svg {
     flex-shrink: 0;
     color: var(--navy-blue);
     margin-top: 0.2rem;
+    width: 20px;
+    height: 20px;
 }
 
 .pix-message p {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--navy-blue);
     opacity: 0.8;
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 0;
 }
 
@@ -3128,6 +3356,15 @@ h4 {
         max-width: 100%;
     }
 
+    .pix-modal .modal-content {
+        max-width: 95%;
+        width: 95%;
+    }
+
+    .pix-body {
+        padding: 2rem 1.5rem;
+    }
+
     .pix-key-container {
         flex-direction: column;
     }
@@ -3135,6 +3372,61 @@ h4 {
     .pix-key {
         font-size: 1rem;
         padding: 0.75rem 1rem;
+    }
+
+    .pix-purpose-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+
+    .purpose-btn {
+        font-size: 0.8rem;
+        padding: 1rem 0.5rem;
+        min-height: 85px;
+    }
+
+    .purpose-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .pix-purpose-selector {
+        padding: 1.5rem;
+    }
+
+    .selected-purpose-text {
+        font-size: 0.9rem;
+    }
+
+    .progress-container {
+        max-height: 250px;
+    }
+
+    .contribution-input {
+        min-width: 120px;
+    }
+
+    .contribution-form {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pix-purpose-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+
+    .purpose-btn {
+        font-size: 0.75rem;
+        padding: 0.8rem 0.4rem;
+        min-height: 75px;
+        gap: 0.4rem;
+    }
+
+    .purpose-btn svg {
+        width: 20px;
+        height: 20px;
     }
 }
 

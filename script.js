@@ -761,19 +761,117 @@ function initializeMusicPlayer() {
 }
 
 // ===== LISTA DE PRESENTES / PIX =====
+// Metas de cada finalidade (em reais)
+const PURPOSE_GOALS = {
+    'lua-de-mel': 5000,
+    'casamento': 5000,
+    'imoveis': 5000,
+    'geladeira': 2000,
+    'sofa': 3000,
+    'fogao': 1500,
+    'televisao': 2500
+};
+
+let selectedPurpose = 'lua-de-mel'; // Finalidade selecionada atualmente
+
 function openPixModal() {
     const modal = document.getElementById('pixModal');
     modal.classList.add('show');
+    initializePurposeSelector();
+    loadProgressData();
+
+    // Configurar atualizações em tempo real (Firebase)
+    if (typeof setupRealtimeUpdates === 'function') {
+        setupRealtimeUpdates();
+    }
+}
+
+// Inicializar seletor de finalidade do PIX
+function initializePurposeSelector() {
+    const purposeBtns = document.querySelectorAll('.purpose-btn');
+    const selectedPurposeText = document.getElementById('selectedPurpose');
+
+    purposeBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            // Remove active de todos os botões
+            purposeBtns.forEach(b => b.classList.remove('active'));
+
+            // Adiciona active ao botão clicado
+            this.classList.add('active');
+
+            // Atualiza o texto da finalidade selecionada
+            const purpose = this.textContent.trim();
+            selectedPurposeText.textContent = purpose;
+
+            // Salva a finalidade selecionada
+            selectedPurpose = this.getAttribute('data-purpose');
+
+            // Log da escolha
+            console.log('Finalidade selecionada:', selectedPurpose);
+        });
+    });
+}
+
+// Carregar dados de progresso (Firebase ou LocalStorage)
+async function loadProgressData() {
+    try {
+        const progressData = await loadFromDatabase();
+
+        Object.keys(PURPOSE_GOALS).forEach(purpose => {
+            const currentValue = progressData[purpose] || 0;
+            const goal = PURPOSE_GOALS[purpose];
+            const percentage = Math.min((currentValue / goal) * 100, 100);
+
+            updateProgressBar(purpose, currentValue, goal, percentage);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar progresso:', error);
+    }
+}
+
+// Atualizar barra de progresso visual
+function updateProgressBar(purpose, currentValue, goal, percentage) {
+    const progressItem = document.querySelector(`.progress-item[data-purpose="${purpose}"]`);
+
+    if (!progressItem) return;
+
+    const progressFill = progressItem.querySelector('.progress-fill');
+    const progressPercent = progressItem.querySelector('.progress-percent');
+    const purposeBtn = document.querySelector(`.purpose-btn[data-purpose="${purpose}"]`);
+
+    // Atualizar apenas a porcentagem
+    progressFill.style.width = `${percentage}%`;
+    progressPercent.textContent = `${Math.round(percentage)}%`;
+
+    // Se completou 100%, marcar como completo e desabilitar botão
+    if (percentage >= 100) {
+        progressItem.classList.add('completed');
+        if (purposeBtn && !purposeBtn.querySelector('.completed-mark')) {
+            purposeBtn.style.opacity = '0.5';
+            purposeBtn.style.pointerEvents = 'none';
+            const mark = document.createElement('span');
+            mark.className = 'completed-mark';
+            mark.textContent = ' ✓';
+            purposeBtn.appendChild(mark);
+        }
+    }
 }
 
 function closePixModal() {
     const modal = document.getElementById('pixModal');
     modal.classList.remove('show');
+
+    // Esconder formulário de contribuição
+    const contributionForm = document.getElementById('contributionForm');
+    if (contributionForm) {
+        contributionForm.style.display = 'none';
+    }
 }
 
 function copyPixKey() {
     const pixKeyFull = '53243721881'; // CPF completo sem formatação
     const copyBtn = document.getElementById('copyBtn');
+    const contributionForm = document.getElementById('contributionForm');
 
     // Copiar para clipboard
     navigator.clipboard.writeText(pixKeyFull)
@@ -789,7 +887,12 @@ function copyPixKey() {
             `;
 
             // Mostrar notificação
-            showNotification('Chave PIX copiada! 💙', 'success');
+            showNotification('Chave PIX copiada! 💙 Agora informe o valor após fazer o PIX.', 'success');
+
+            // Mostrar formulário de contribuição
+            if (contributionForm) {
+                contributionForm.style.display = 'block';
+            }
 
             // Reverter após 3 segundos
             setTimeout(() => {
@@ -801,6 +904,65 @@ function copyPixKey() {
             console.error('Erro ao copiar:', err);
             showNotification('Não foi possível copiar. Tente selecionar e copiar manualmente.', 'error');
         });
+}
+
+// Registrar contribuição (Firebase ou LocalStorage)
+async function registerContribution() {
+    const contributionInput = document.getElementById('contributionValue');
+    const value = parseFloat(contributionInput.value);
+
+    // Validar valor
+    if (!value || value <= 0) {
+        showNotification('Por favor, informe um valor válido.', 'error');
+        return;
+    }
+
+    // Verificar se a finalidade já está completa
+    const progressData = await loadFromDatabase();
+    const currentValue = progressData[selectedPurpose] || 0;
+    const goal = PURPOSE_GOALS[selectedPurpose];
+
+    if (currentValue >= goal) {
+        showNotification('Esta finalidade já atingiu a meta! Escolha outra opção. 😊', 'info');
+        return;
+    }
+
+    try {
+        // Salvar no banco de dados (Firebase ou LocalStorage)
+        const result = await saveToDatabase(selectedPurpose, value);
+
+        if (result.success) {
+            // Atualizar interface
+            const percentage = (result.newValue / result.goal) * 100;
+            updateProgressBar(selectedPurpose, result.newValue, result.goal, percentage);
+
+            // Feedback ao usuário
+            const remaining = result.goal - result.newValue;
+            let message = `Contribuição de R$ ${value.toFixed(2)} registrada com sucesso! 💙`;
+
+            if (remaining > 0) {
+                message += ` Faltam R$ ${remaining.toFixed(2)} para completar esta meta.`;
+            } else {
+                message += ` Meta completada! 🎉`;
+            }
+
+            showNotification(message, 'success');
+
+            // Limpar campo e esconder formulário
+            contributionInput.value = '';
+            const contributionForm = document.getElementById('contributionForm');
+            if (contributionForm) {
+                setTimeout(() => {
+                    contributionForm.style.display = 'none';
+                }, 3000);
+            }
+        } else {
+            showNotification('Erro ao registrar contribuição. Tente novamente.', 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao registrar contribuição:', error);
+        showNotification('Erro ao registrar contribuição. Tente novamente.', 'error');
+    }
 }
 
 // Fechar modal ao clicar fora
