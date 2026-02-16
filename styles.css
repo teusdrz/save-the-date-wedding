@@ -2859,6 +2859,7 @@ h4 {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    position: relative;
 }
 
 .footer-ornament {
@@ -2878,6 +2879,33 @@ h4 {
     letter-spacing: 0.2em;
     opacity: 0.7;
     font-weight: 300;
+}
+
+/* Reset Timer Admin Button */
+.rstadm-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: all 0.3s ease;
+    font-family: monospace;
+    opacity: 0.3;
+}
+
+.rstadm-btn:hover {
+    color: rgba(212, 175, 55, 0.6);
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.rstadm-btn:active {
+    transform: scale(0.95);
 }
 
 /* ===== LISTA DE PRESENTES ===== */

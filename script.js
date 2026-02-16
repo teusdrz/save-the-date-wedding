@@ -972,3 +972,65 @@ window.addEventListener('click', (e) => {
         closePixModal();
     }
 });
+
+// ===== FUNÇÃO DE DESENVOLVIMENTO - RESETAR TIMER =====
+// Botão RSTADM no footer (Admin Only)
+document.addEventListener('DOMContentLoaded', () => {
+    const rstadmBtn = document.getElementById('rstadm');
+    if (rstadmBtn) {
+        rstadmBtn.addEventListener('click', () => {
+            // Solicitar senha de administrador
+            const senha = prompt('🔐 ACESSO ADMINISTRATIVO\n\nDigite a senha de administrador:');
+
+            // Verificar senha
+            if (senha === 'Teus2004@') {
+                const confirma = confirm('✅ Senha correta!\n\n🔄 Resetar o timer de confirmação?\n\nIsso vai reiniciar o cronômetro de 1 semana.');
+                if (confirma) {
+                    resetTimer();
+                }
+            } else if (senha !== null) {
+                alert('❌ Senha incorreta! Acesso negado.');
+            }
+        });
+    }
+});
+
+// Para usar no console: resetTimer()
+window.resetTimer = function () {
+    try {
+        // Remover o registro de primeira visita
+        localStorage.removeItem(CONFIG.timerKey);
+
+        // Recarregar a página para reiniciar o timer
+        console.log('✅ Timer resetado! Recarregando página...');
+        location.reload();
+    } catch (error) {
+        console.error('❌ Erro ao resetar timer:', error);
+    }
+};
+
+// Adicionar atalho de teclado: Ctrl+Shift+R (ou Cmd+Shift+R no Mac) - COM SENHA
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
+        e.preventDefault();
+
+        // Solicitar senha
+        const senha = prompt('🔐 Digite a senha de administrador:');
+
+        if (senha === 'Teus2004@') {
+            const confirma = confirm('✅ Senha correta!\n\n🔄 Resetar o timer de 1 semana?');
+            if (confirma) {
+                resetTimer();
+            }
+        } else if (senha !== null) {
+            alert('❌ Senha incorreta! Acesso negado.');
+        }
+    }
+});
+
+console.log('🔧 MODO DESENVOLVIMENTO ATIVO');
+console.log('📝 Para resetar o timer:');
+console.log('   1. Clique no botão RSTADM no rodapé (requer senha)');
+console.log('   2. Pressione: Ctrl+Shift+R ou Cmd+Shift+R (requer senha)');
+console.log('   3. Console: resetTimer() (sem senha - apenas para dev)');
+
