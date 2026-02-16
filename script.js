@@ -9,6 +9,7 @@ const CONFIG = {
 
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', () => {
+    initializeEntranceAnimation();
     initializeTimer();
     initializeForm();
     initializeGuestFilter();
@@ -19,6 +20,151 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeMusicPlayer();
     loadSavedData();
 });
+
+// ===== ANIMAÇÃO DE ENTRADA COM GSAP =====
+// Conceito: Minimalismo absoluto - apenas letras com movimentos sutis
+function initializeEntranceAnimation() {
+    // Timeline minimalista e elegante
+    const tl = gsap.timeline({
+        defaults: {
+            ease: "power3.out",
+            duration: 1.5
+        }
+    });
+
+    // Configuração inicial
+    gsap.set('.entrance-content', {
+        opacity: 0
+    });
+
+    gsap.set('.monogram-letter', {
+        opacity: 0,
+        y: 40,
+        scale: 0.9
+    });
+
+    gsap.set('.monogram-ampersand', {
+        opacity: 0,
+        scale: 0.7
+    });
+
+    // Breathing effect no fundo (ultra sutil)
+    gsap.to('.entrance-overlay::before', {
+        opacity: 0.015,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+    });
+
+    // Sequência minimalista da animação
+    tl
+        // 1. Container fade in
+        .to('.entrance-content', {
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out"
+        })
+
+        // 2. Letra M aparece suavemente
+        .to('.monogram-m', {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.8,
+            ease: "power4.out"
+        }, "+=0.5")
+
+        // 3. Ampersand com movimento delicado
+        .to('.monogram-ampersand', {
+            opacity: 1,
+            scale: 1,
+            duration: 1.5,
+            ease: "back.out(1.2)"
+        }, "-=1.2")
+
+        // 4. Letra F completa o monograma
+        .to('.monogram-f', {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.8,
+            ease: "power4.out"
+        }, "-=1.4")
+
+        // 5. Glow sutil e elegante nas letras
+        .to(['.monogram-m', '.monogram-f'], {
+            textShadow: "0 0 40px rgba(255, 255, 255, 0.15)",
+            duration: 2,
+            repeat: 1,
+            yoyo: true,
+            ease: "sine.inOut",
+            stagger: 0.3
+        }, "+=0.8")
+
+        // 6. Ampersand também recebe glow
+        .to('.monogram-ampersand', {
+            textShadow: "0 0 25px rgba(255, 255, 255, 0.12)",
+            duration: 2,
+            repeat: 1,
+            yoyo: true,
+            ease: "sine.inOut"
+        }, "<")
+
+        // 7. Pausa contemplativa
+        .to({}, { duration: 1 })
+
+        // 8. Fade out minimalista e sutil
+        // As letras se dissolvem individualmente
+        .to('.monogram-m', {
+            opacity: 0,
+            y: -20,
+            scale: 0.95,
+            duration: 1.5,
+            ease: "power2.in"
+        })
+        .to('.monogram-f', {
+            opacity: 0,
+            y: -20,
+            scale: 0.95,
+            duration: 1.5,
+            ease: "power2.in"
+        }, "-=1.3")
+        .to('.monogram-ampersand', {
+            opacity: 0,
+            scale: 0.8,
+            duration: 1.2,
+            ease: "power2.in"
+        }, "-=1.4")
+
+        // 9. O fundo desaparece suavemente por último
+        .to('.entrance-overlay', {
+            opacity: 0,
+            duration: 1.8,
+            ease: "power2.inOut",
+            onComplete: () => {
+                document.querySelector('.entrance-overlay').style.display = 'none';
+            }
+        }, "-=0.5");
+
+    // Parallax ultra sutil no mouse (apenas desktop)
+    if (window.innerWidth > 768) {
+        document.addEventListener('mousemove', (e) => {
+            const overlay = document.querySelector('.entrance-overlay');
+            if (!overlay || overlay.style.display === 'none') return;
+
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.005;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.005;
+
+            gsap.to('.entrance-monogram', {
+                x: moveX,
+                y: moveY,
+                duration: 1.2,
+                ease: "power2.out"
+            });
+        });
+    }
+}
 
 // ===== SISTEMA DE CRONÔMETRO =====
 function initializeTimer() {

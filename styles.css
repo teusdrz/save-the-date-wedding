@@ -186,18 +186,23 @@ section {
 }
 
 /* ===== ANIMAÇÃO DE ENTRADA ===== */
+/* ===================================
+   ENTRADA ULTRA MINIMALISTA COM GSAP
+   Conceito: Pureza absoluta - apenas as letras
+   =================================== */
 .entrance-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, var(--navy-blue) 0%, #0D2136 50%, #0A1929 100%);
+    background: linear-gradient(135deg, #0A1929 0%, #0D2136 50%, var(--navy-blue) 100%);
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeOutEntrance 7s ease-in-out forwards;
+    opacity: 1;
+    visibility: visible;
 }
 
 .entrance-overlay::before {
@@ -208,474 +213,76 @@ section {
     right: 0;
     bottom: 0;
     background-image:
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.008) 0%, transparent 60%);
     pointer-events: none;
-    animation: pulse 7s ease-in-out;
 }
 
 .entrance-content {
     text-align: center;
-    animation: entranceContentFade 7s ease-in-out;
-}
-
-.entrance-ornament-top,
-.entrance-ornament-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
 }
 
-.entrance-ornament-top {
-    margin-bottom: 2.5rem;
-    animation: ornamentSlideDown 7s ease-in-out;
-}
-
-.entrance-ornament-bottom {
-    margin-top: 2.5rem;
-    animation: ornamentSlideUp 7s ease-in-out;
-}
-
-.entrance-ornament-top svg,
-.entrance-ornament-bottom svg {
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
-}
-
-/* Estrutura dos nomes */
-.entrance-names {
-    font-family: 'Playfair Display', serif;
-    font-size: 5.5rem;
-    font-weight: 400;
-    color: var(--pure-white);
+/* Monograma central - Minimalismo puro */
+.entrance-monogram {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    gap: 2rem;
-    letter-spacing: 0.3em;
-    min-height: 150px;
-}
-
-.name-left,
-.name-right {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
+    gap: 1.5rem;
+    font-family: 'Imperial Script', cursive;
+    color: var(--pure-white);
     position: relative;
 }
 
-/* Nome da esquerda começa centralizado com o & */
-.name-left {
-    animation: moveLeft 7s ease-in-out;
-    justify-content: flex-end;
-    margin-right: 2.5rem;
-}
-
-/* Nome da direita começa centralizado com o & */
-.name-right {
-    animation: moveRight 7s ease-in-out;
-    justify-content: flex-start;
-    margin-left: 2.5rem;
-}
-
-/* Letras iniciais M e F */
-.initial-letter {
-    opacity: 0;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-    animation: initialAppear 7s ease-in-out;
-}
-
-/* Restante dos nomes ATHEUS e LÁVIA */
-.full-name-letters {
-    opacity: 0;
-    letter-spacing: 0.15em;
-    margin-left: 0;
-    animation: nameExpand 7s ease-in-out;
-    display: inline-block;
-    transform-origin: left center;
-    overflow: visible;
-    max-width: 0;
-}
-
-.name-right .full-name-letters {
-    transform-origin: left center;
-}
-
-/* Ampersand & - fica sempre FIXO no centro absoluto */
-.ampersand {
-    font-size: 4.5rem;
-    opacity: 0;
-    animation: ampersandGlow 7s ease-in-out;
-    flex-shrink: 0;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
+.monogram-letter {
+    font-size: 12rem;
     font-weight: 400;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+    position: relative;
 }
 
-/* TIMELINE DA ANIMAÇÃO:
-   0s - 1.5s: M & F aparecem NO CENTRO
-   1.5s - 3s: M vai para ESQUERDA, F vai para DIREITA, nomes completos aparecem (MATHEUS & FLÁVIA)
-   3s - 5s: Nomes completos visíveis
-   5s - 6s: M e F voltam para o CENTRO, nomes desaparecem (M & F)
-   6s - 7s: Fade out e página abre
-*/
+.monogram-ampersand {
+    font-size: 7rem;
+    font-style: normal;
+    font-weight: 400;
+    opacity: 0;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    position: relative;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0 0.5rem;
+}
 
-@keyframes moveLeft {
-
-    /* M começa na posição normal (separado do &) */
-    0% {
-        transform: translateX(0);
+/* Responsividade refinada */
+@media (max-width: 768px) {
+    .entrance-monogram {
+        gap: 1.2rem;
     }
 
-    15% {
-        transform: translateX(0);
+    .monogram-letter {
+        font-size: 8rem;
     }
 
-    /* M se move para a esquerda para dar espaço aos nomes - ESPAÇAMENTO REDUZIDO */
-    25% {
-        transform: translateX(0);
-    }
-
-    40% {
-        transform: translateX(-60px);
-    }
-
-    /* Fica afastado enquanto nomes aparecem */
-    70% {
-        transform: translateX(-60px);
-    }
-
-    /* Volta para posição original (separado do &) */
-    85% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(0);
+    .monogram-ampersand {
+        font-size: 5rem;
     }
 }
 
-@keyframes moveRight {
-
-    /* F começa na posição normal (separado do &) */
-    0% {
-        transform: translateX(0);
+@media (max-width: 480px) {
+    .entrance-monogram {
+        gap: 1rem;
     }
 
-    15% {
-        transform: translateX(0);
+    .monogram-letter {
+        font-size: 6rem;
     }
 
-    /* F se move para a direita para dar espaço aos nomes - ESPAÇAMENTO REDUZIDO */
-    25% {
-        transform: translateX(0);
-    }
-
-    40% {
-        transform: translateX(60px);
-    }
-
-    /* Fica afastado enquanto nomes aparecem */
-    70% {
-        transform: translateX(60px);
-    }
-
-    /* Volta para posição original (separado do &) */
-    85% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(0);
-    }
-}
-
-@keyframes initialAppear {
-
-    /* M & F aparecem */
-    0% {
-        opacity: 0;
-        transform: scale(1);
-    }
-
-    15% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    /* Ficam visíveis durante movimento */
-    85% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    /* Fade out */
-    100% {
-        opacity: 0;
-        transform: scale(1);
-    }
-}
-
-@keyframes nameExpand {
-
-    /* Escondidos no início */
-    0% {
-        opacity: 0;
-        max-width: 0;
-        transform: scaleX(0);
-    }
-
-    25% {
-        opacity: 0;
-        max-width: 0;
-        transform: scaleX(0);
-    }
-
-    /* Expandem conforme M e F se afastam */
-    40% {
-        opacity: 1;
-        max-width: 500px;
-        transform: scaleX(1);
-    }
-
-    /* Ficam visíveis */
-    70% {
-        opacity: 1;
-        max-width: 500px;
-        transform: scaleX(1);
-    }
-
-    /* Contraem quando M e F voltam */
-    85% {
-        opacity: 0;
-        max-width: 0;
-        transform: scaleX(0);
-    }
-
-    /* Desaparecem */
-    100% {
-        opacity: 0;
-        max-width: 0;
-        transform: scaleX(0);
-    }
-}
-
-@keyframes ampersandGlow {
-
-    /* Aparece com M & F - Centro */
-    0% {
-        opacity: 0;
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-    }
-
-    15% {
-        opacity: 1;
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-        transform: translate(-50%, -50%);
-    }
-
-    /* Fica visível no centro */
-    25% {
-        opacity: 1;
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-        transform: translate(-50%, -50%);
-    }
-
-    32% {
-        opacity: 1;
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-        transform: translate(-50%, -50%);
-    }
-
-    /* Move suavemente para a direita (em direção à FLÁVIA) */
-    36% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%) translateX(40px);
-    }
-
-    40% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%) translateX(40px);
-    }
-
-    45% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%) translateX(40px);
-    }
-
-    52% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%) translateX(40px);
-    }
-
-    62% {
-        opacity: 1;
-        color: white;
-        text-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
-        transform: translate(-50%, -50%) translateX(40px);
-    }
-
-    /* Continua deslocado */
-    75% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%) translateX(40px);
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-    }
-
-    /* Volta ao centro suavemente */
-    85% {
-        opacity: 1;
-        color: white;
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-        transform: translate(-50%, -50%);
-    }
-
-    92% {
-        opacity: 1;
-        color: white;
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-        transform: translate(-50%, -50%);
-    }
-
-    /* Continua visível até o final no centro */
-    100% {
-        opacity: 1;
-        color: white;
-        transform: translate(-50%, -50%);
-        text-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-    }
-}
-
-/* Animação de desenho suave do & como assinatura */
-@keyframes drawAmpersand {
-    0% {
-        background-size: 0% 100%;
-        opacity: 0;
-        filter: blur(4px);
-    }
-
-    10% {
-        opacity: 0.4;
-        filter: blur(3px);
-    }
-
-    30% {
-        opacity: 0.7;
-        filter: blur(1.5px);
-    }
-
-    60% {
-        opacity: 0.9;
-        filter: blur(0.5px);
-    }
-
-    /* Desenha suavemente da esquerda para direita com fade in progressivo */
-    100% {
-        background-size: 100% 100%;
-        opacity: 1;
-        filter: blur(0px);
-    }
-}
-
-@keyframes fadeOutEntrance {
-    0% {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    85% {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-
-@keyframes entranceContentFade {
-    0% {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    15% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    85% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(1.05);
-    }
-}
-
-@keyframes ornamentSlideDown {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-
-    15% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    85% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-}
-
-@keyframes ornamentSlideUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    15% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    85% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 0.3;
-    }
-
-    50% {
-        opacity: 0.6;
+    .monogram-ampersand {
+        font-size: 4rem;
     }
 }
 

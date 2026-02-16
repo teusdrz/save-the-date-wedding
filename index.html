@@ -12,10 +12,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Imperial+Script&display=swap" rel="stylesheet">
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body>
@@ -41,31 +45,14 @@
         Seu navegador não suporta o elemento de áudio.
     </audio>
 
-    <!-- Overlay de entrada com animação -->
+    <!-- Overlay de entrada com animação GSAP -->
     <div class="entrance-overlay">
         <div class="entrance-content">
-            <div class="entrance-ornament-top">
-                <svg width="100" height="30" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 15C5 15 25 5 50 15C75 25 95 15 95 15" stroke="white" stroke-width="0.5" opacity="0.5" />
-                    <circle cx="50" cy="15" r="2" fill="white" opacity="0.5" />
-                </svg>
-            </div>
-            <div class="entrance-names">
-                <div class="name-left">
-                    <span class="initial-letter">M</span>
-                    <span class="full-name-letters">ATHEUS</span>
-                </div>
-                <span class="ampersand">&</span>
-                <div class="name-right">
-                    <span class="initial-letter">F</span>
-                    <span class="full-name-letters">LÁVIA</span>
-                </div>
-            </div>
-            <div class="entrance-ornament-bottom">
-                <svg width="100" height="30" viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 15C5 15 25 25 50 15C75 5 95 15 95 15" stroke="white" stroke-width="0.5" opacity="0.5" />
-                    <circle cx="50" cy="15" r="2" fill="white" opacity="0.5" />
-                </svg>
+            <!-- Monograma central minimalista -->
+            <div class="entrance-monogram">
+                <span class="monogram-letter monogram-m">M</span>
+                <span class="monogram-ampersand">&</span>
+                <span class="monogram-letter monogram-f">F</span>
             </div>
         </div>
     </div>
