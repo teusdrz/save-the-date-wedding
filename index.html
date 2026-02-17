@@ -889,10 +889,14 @@
 
                     <!-- Campo para registrar contribuição -->
                     <div class="contribution-form" id="contributionForm" style="display: none;">
-                        <p class="contribution-label">Após realizar o PIX, informe o valor da sua contribuição:</p>
+                        <p class="contribution-label">Após realizar o PIX, registre sua contribuição:</p>
                         <div class="contribution-input-group">
-                            <input type="number" id="contributionValue" class="contribution-input" placeholder="Ex: 100"
-                                min="1" step="0.01">
+                            <input type="text" id="contributorName" class="contribution-input" placeholder="Seu nome"
+                                required>
+                        </div>
+                        <div class="contribution-input-group">
+                            <input type="number" id="contributionValue" class="contribution-input" placeholder="Valor (R$)"
+                                min="1" step="0.01" required>
                             <button class="contribution-btn" onclick="registerContribution()">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">

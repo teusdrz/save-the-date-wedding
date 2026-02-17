@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Save the Date</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-styles.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <script src="config.js"></script>
+</head>
+<body class="dashboard-body">
+    <!-- Botão Menu Mobile -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    
+    <!-- Overlay para fechar sidebar no mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Save the Date</h1>
+                <p>Painel Administrativo</p>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="menu-item active" data-section="dashboard">
+                    <span>Dashboard</span>
+                </a>
+                <a href="#guests" class="menu-item" data-section="guests">
+                    <span>Convidados</span>
+                </a>
+                <a href="#payments" class="menu-item" data-section="payments">
+                    <span>Pagamentos PIX</span>
+                </a>
+                <a href="#settings" class="menu-item" data-section="settings">
+                    <span>Configuracoes</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-button" id="logoutButton">Sair</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="dashboard-header">
+                    <h2>Dashboard</h2>
+                    <p>Visao geral das confirmacoes</p>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Confirmados</span>
+                            <div class="stat-icon confirmed">✓</div>
+                        </div>
+                        <div class="stat-value" id="confirmedCount">0</div>
+                        <div class="stat-description">Convidados confirmados</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Pendentes</span>
+                            <div class="stat-icon pending">•</div>
+                        </div>
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-description">Aguardando resposta</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Recusados</span>
+                            <div class="stat-icon declined">✕</div>
+                        </div>
+                        <div class="stat-value" id="declinedCount">0</div>
+                        <div class="stat-description">Nao poderao comparecer</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Total</span>
+                            <div class="stat-icon total">Σ</div>
+                        </div>
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-description">Total de convidados</div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Status das Confirmacoes</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Confirmacoes por Periodo</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Guests Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Confirmacoes Recentes</h3>
+                    </div>
+                    <table class="guests-table" id="recentGuestsTable">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Acompanhantes</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentGuestsBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Guests Section -->
+            <section id="guests-section" class="content-section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Convidados</h2>
+                    <p>Lista completa de convidados e suas confirmacoes</p>
+                </div>
+                
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Todos os Convidados</h3>
+                        <div class="table-actions">
+                            <button class="filter-button active" data-filter="all">Todos</button>
+                            <button class="filter-button" data-filter="confirmed">Confirmados</button>
+                            <button class="filter-button" data-filter="pending">Pendentes</button>
+                            <button class="filter-button" data-filter="declined">Recusados</button>
+                        </div>
+                    </div>
+                    <table class="guests-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Acompanhantes</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allGuestsBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Payments Section -->
+            <section id="payments-section" class="content-section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Pagamentos PIX</h2>
+                    <p>Controle de contribuicoes via PIX</p>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Total Arrecadado</span>
+                            <div class="stat-icon confirmed">R$</div>
+                        </div>
+                        <div class="stat-value" id="totalPaymentsAmount">R$ 0,00</div>
+                        <div class="stat-description">Valor total de contribuicoes</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Total de PIX</span>
+                            <div class="stat-icon total">#</div>
+                        </div>
+                        <div class="stat-value" id="totalPaymentsCount">0</div>
+                        <div class="stat-description">Numero de contribuicoes</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Categoria Maior</span>
+                            <div class="stat-icon pending">🏆</div>
+                        </div>
+                        <div class="stat-value" id="topCategory">-</div>
+                        <div class="stat-description">Categoria mais contribuida</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Media por PIX</span>
+                            <div class="stat-icon">📊</div>
+                        </div>
+                        <div class="stat-value" id="averagePayment">R$ 0,00</div>
+                        <div class="stat-description">Valor medio das contribuicoes</div>
+                    </div>
+                </div>
+                
+                <!-- Payments Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Historico de Contribuicoes PIX</h3>
+                    </div>
+                    <table class="guests-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Payments by Category -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Contribuicoes por Categoria</h3>
+                    </div>
+                    <div class="category-grid" id="categoryGrid">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Configuracoes</h2>
+                    <p>Gerenciar configuracoes do sistema</p>
+                </div>
+                
+                <!-- Controle do Timer -->
+                <div class="settings-card">
+                    <h3 class="settings-title">Gerenciar Timer de Confirmação</h3>
+                    <p class="settings-description">
+                        O timer controla o prazo de 1 semana para os convidados confirmarem presença. 
+                        Resetar o timer reiniciará a contagem para todos os usuários.
+                    </p>
+                    <div class="timer-controls">
+                        <button type="button" class="danger-button" id="resetTimerBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10C18 14.4183 14.4183 18 10 18C7.23858 18 4.80908 16.5642 3.5 14.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M2 14L3.5 14.3L4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Resetar Timer (Reiniciar Contagem)
+                        </button>
+                        <p class="warning-text">
+                            ⚠️ <strong>Atenção:</strong> Esta ação reiniciará o prazo de 1 semana para todos os convidados.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            </section>
+        </main>
+    </div>
+    
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

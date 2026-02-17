@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup - Firebase Initialization</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #000;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+        }
+        h1 {
+            color: #00ff00;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #1a1a1a;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #00ff00;
+        }
+        .button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            display: block;
+            margin: 20px auto;
+        }
+        .button:hover {
+            background: #00cc00;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .warning {
+            color: #ffaa00;
+        }
+        .success {
+            color: #00ff00;
+        }
+        .error {
+            color: #ff0000;
+        }
+        #console {
+            background: #000;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 FIREBASE SETUP</h1>
+        
+        <div class="step">
+            <h3>Passo 1: Configurar Regras do Firestore</h3>
+            <p class="warning">IMPORTANTE: Antes de executar o setup, configure as regras temporárias no Firebase Console.</p>
+            <ol>
+                <li>Acesse: <a href="https://console.firebase.google.com" target="_blank" style="color: #00ff00;">Firebase Console</a></li>
+                <li>Selecione o projeto: <strong>save-the-date-wedding</strong></li>
+                <li>Vá em: <strong>Firestore Database > Regras</strong></li>
+                <li>Cole as regras TEMPORÁRIAS abaixo:</li>
+            </ol>
+            <pre>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;  // TEMPORÁRIO - apenas para setup
+    }
+  }
+}</pre>
+            <p class="warning">⚠️ Esta regra permite acesso total! Use apenas para setup inicial.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Passo 2: Executar Setup</h3>
+            <p>Clique no botão abaixo para inicializar o banco de dados:</p>
+            <button class="button" onclick="runSetup()">EXECUTAR SETUP</button>
+        </div>
+        
+        <div class="step">
+            <h3>Passo 3: Credenciais de Acesso</h3>
+            <p>Após o setup, use estas credenciais:</p>
+            <pre>Email: admin@savethedatewedding.com
+Senha: savethedatewedding2026</pre>
+        </div>
+        
+        <div class="step">
+            <h3>Passo 4: Aplicar Regras de Segurança</h3>
+            <p class="warning">IMPORTANTE: Após o setup, substitua as regras temporárias pelas regras de segurança!</p>
+            <p>Use o conteúdo do arquivo: <strong>firestore.rules</strong></p>
+        </div>
+        
+        <div id="console">
+            <p class="success">>>> Console de Setup</p>
+            <p>Aguardando execução...</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="admin-login.html" style="color: #00ff00;">Ir para Login Admin</a>
+        </div>
+    </div>
+    
+    <script>
+        const consoleDiv = document.getElementById('console');
+        
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = '>>> ' + message;
+            consoleDiv.appendChild(p);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        async function runSetup() {
+            consoleDiv.innerHTML = '<p class="success">>>> Iniciando setup...</p>';
+            
+            try {
+                // Inicializar Firebase
+                log('Inicializando Firebase...', 'info');
+                let db;
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(CONFIG.firebase);
+                }
+                db = firebase.firestore();
+                log('✓ Firebase inicializado', 'success');
+                
+                // Criar admin
+                log('Criando configurações de admin...', 'info');
+                await db.collection('settings').doc('admin').set({
+                    email: 'admin@savethedatewedding.com',
+                    password: 'savethedatewedding2026',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log('✓ Admin criado com sucesso', 'success');
+                
+                // Criar exemplo de RSVP
+                log('Criando estrutura de RSVP...', 'info');
+                await db.collection('rsvp').doc('_example').set({
+                    guestName: 'Exemplo',
+                    fullName: 'Convidado Exemplo',
+                    status: 'pending',
+                    attendance: 'pending',
+                    message: '',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log('✓ Estrutura de RSVP criada', 'success');
+                
+                // Criar exemplo de pagamento
+                log('Criando estrutura de pagamentos...', 'info');
+                await db.collection('payments').doc('_example').set({
+                    transactionId: 'EXAMPLE123',
+                    name: 'Exemplo',
+                    amount: 0,
+                    status: 'pending',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log('✓ Estrutura de pagamentos criada', 'success');
+                
+                log('', 'info');
+                log('=== SETUP CONCLUÍDO COM SUCESSO! ===', 'success');
+                log('', 'info');
+                log('Credenciais de acesso:', 'info');
+                log('Email: admin@savethedatewedding.com', 'success');
+                log('Senha: savethedatewedding2026', 'success');
+                log('', 'info');
+                log('⚠️ PRÓXIMO PASSO IMPORTANTE:', 'warning');
+                log('1. Acesse o Firebase Console', 'warning');
+                log('2. Substitua as regras temporárias', 'warning');
+                log('3. Use o conteúdo de firestore.rules', 'warning');
+                log('', 'info');
+                log('Pronto! Você pode fazer login agora.', 'success');
+                
+                // Mostrar botão para ir ao login
+                setTimeout(() => {
+                    if (confirm('Setup concluído! Ir para a página de login?')) {
+                        window.location.href = 'admin-login.html';
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                log('', 'info');
+                log('✗ ERRO: ' + error.message, 'error');
+                log('', 'info');
+                
+                if (error.code === 'permission-denied') {
+                    log('ERRO DE PERMISSÃO!', 'error');
+                    log('', 'info');
+                    log('Você precisa configurar as regras do Firestore primeiro:', 'warning');
+                    log('1. Acesse Firebase Console', 'warning');
+                    log('2. Vá em Firestore Database > Regras', 'warning');
+                    log('3. Cole as regras temporárias (Passo 1 acima)', 'warning');
+                    log('4. Publique as regras', 'warning');
+                    log('5. Execute o setup novamente', 'warning');
+                } else {
+                    log('Detalhes: ' + JSON.stringify(error), 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

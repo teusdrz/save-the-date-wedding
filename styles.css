@@ -2831,19 +2831,19 @@ h4 {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .contribution-input {
     flex: 1;
-    min-width: 150px;
-    max-width: 200px;
+    min-width: 200px;
+    max-width: 100%;
     padding: 0.8rem 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
     border: 2px solid var(--navy-blue);
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
-    text-align: center;
 }
 
 .contribution-input:focus {

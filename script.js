@@ -5,6 +5,12 @@ const CONFIG = {
     timerKey: 'saveTheDate_firstVisit',
     userIdentityKey: 'saveTheDate_userIdentity',
     oneWeekInMs: 7 * 24 * 60 * 60 * 1000, // 1 semana em milissegundos
+    collections: {
+        guests: "guests",
+        payments: "payments",
+        rsvp: "rsvp",
+        settings: "settings"
+    }
 };
 
 // ===== INICIALIZAÇÃO =====
@@ -23,7 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== ANIMAÇÃO DE ENTRADA COM GSAP =====
 // Conceito: Minimalismo absoluto - apenas letras com movimentos sutis
+// Animação ocorre APENAS na primeira visita ao site
 function initializeEntranceAnimation() {
+    const FIRST_VISIT_KEY = 'saveTheDate_hasSeenIntro';
+    const hasSeenIntro = localStorage.getItem(FIRST_VISIT_KEY);
+    
+    // Se já viu a intro, ocultar imediatamente
+    if (hasSeenIntro === 'true') {
+        const overlay = document.querySelector('.entrance-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        return; // Não executar animação
+    }
+    
+    // Marcar que o usuário já viu a intro
+    localStorage.setItem(FIRST_VISIT_KEY, 'true');
+    
     // Timeline minimalista e elegante
     const tl = gsap.timeline({
         defaults: {
@@ -167,7 +189,10 @@ function initializeEntranceAnimation() {
 }
 
 // ===== SISTEMA DE CRONÔMETRO =====
-function initializeTimer() {
+async function initializeTimer() {
+    // Verificar se o admin resetou o timer
+    await checkTimerReset();
+    
     // Verificar se já existe um registro de primeira visita
     let firstVisit = localStorage.getItem(CONFIG.timerKey);
 
@@ -184,6 +209,33 @@ function initializeTimer() {
 
     // Atualizar a cada segundo
     setInterval(() => updateTimer(firstVisit), 1000);
+}
+
+// Verificar se o admin resetou o timer
+async function checkTimerReset() {
+    try {
+        if (!db) return; // Firebase não disponível
+        
+        const timerControlDoc = await db.collection(CONFIG.collections.settings).doc('timerControl').get();
+        
+        if (timerControlDoc.exists) {
+            const data = timerControlDoc.data();
+            
+            if (data.shouldReset) {
+                // Admin resetou o timer - limpar localStorage
+                localStorage.removeItem(CONFIG.timerKey);
+                console.log('Timer resetado pelo administrador');
+                
+                // Limpar flag no Firebase (para não resetar novamente)
+                await db.collection(CONFIG.collections.settings).doc('timerControl').update({
+                    shouldReset: false,
+                    lastProcessed: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        }
+    } catch (error) {
+        console.warn('Não foi possível verificar reset do timer:', error);
+    }
 }
 
 function updateTimer(firstVisit) {
@@ -415,26 +467,38 @@ function closeFullNameModal() {
     document.getElementById('fullName').value = '';
 }
 
-// ===== WHATSAPP =====
-function sendToWhatsApp(guestName, fullName, attendance, message = '') {
+// ===== WHATSAPP E FIREBASE =====
+async function sendToWhatsApp(guestName, fullName, attendance, message = '') {
     const phoneNumber = '5511932049040'; // Seu WhatsApp
 
     let whatsappMessage = '';
 
     if (attendance === 'yes') {
-        // Nome completo foi fornecido
-        whatsappMessage = `Olá! Eu, *${fullName}*, confirmo minha presença nesse grande dia! 🎉`;
+        whatsappMessage = `Ola! Eu, *${fullName}*, confirmo minha presenca nesse grande dia!`;
 
         if (message.trim()) {
             whatsappMessage += `\n\n_Mensagem:_ ${message}`;
         }
     } else {
-        // Não confirmou presença
-        whatsappMessage = `Olá! Infelizmente *${guestName}* não poderá comparecer ao casamento. 😔`;
+        whatsappMessage = `Ola! Infelizmente *${guestName}* nao podera comparecer ao casamento.`;
 
         if (message.trim()) {
             whatsappMessage += `\n\n_Mensagem:_ ${message}`;
         }
+    }
+    
+    // Salvar RSVP no Firebase ANTES de enviar para WhatsApp
+    try {
+        await saveRSVP({
+            guestName: guestName,
+            fullName: fullName || guestName,
+            attendance: attendance,
+            message: message,
+            status: attendance === 'yes' ? 'confirmed' : 'declined',
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Erro ao salvar RSVP:', error);
     }
 
     // Codificar a mensagem para URL
@@ -504,7 +568,45 @@ function initializeModal() {
     });
 }
 
-function saveRSVP(data) {
+async function saveRSVP(data) {
+    try {
+        // Verificar se Firebase está disponível
+        if (!db) {
+            console.warn('Firebase nao disponivel. Salvando apenas localmente.');
+            saveRSVPLocally(data);
+            return;
+        }
+        
+        // Gerar ID único para o convidado
+        const guestId = data.guestName.toLowerCase().replace(/\s+/g, '-');
+        
+        // Salvar no Firebase
+        await db.collection(CONFIG.collections.rsvp).doc(guestId).set({
+            guestName: data.guestName,
+            fullName: data.fullName,
+            attendance: data.attendance,
+            status: data.status,
+            message: data.message || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            companions: data.companions || 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
+        console.log('RSVP salvo no Firebase com sucesso:', guestId);
+        
+        // Também salvar localmente como backup
+        saveRSVPLocally(data);
+        
+    } catch (error) {
+        console.error('Erro ao salvar RSVP no Firebase:', error);
+        // Fallback para localStorage
+        saveRSVPLocally(data);
+    }
+}
+
+function saveRSVPLocally(data) {
     // Obter dados existentes
     let savedData = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
 
@@ -514,7 +616,6 @@ function saveRSVP(data) {
     if (existingIndex !== -1) {
         // Atualizar confirmação existente
         savedData[existingIndex] = data;
-        showNotification('Confirmação atualizada com sucesso!', 'success');
     } else {
         // Adicionar nova confirmação
         savedData.push(data);
@@ -522,9 +623,7 @@ function saveRSVP(data) {
 
     // Salvar no localStorage
     localStorage.setItem(CONFIG.storageKey, JSON.stringify(savedData));
-
-    // Enviar para servidor (implementar quando tiver backend)
-    // sendToServer(data);
+    console.log('RSVP salvo localmente');
 }
 
 function loadSavedData() {
@@ -1054,8 +1153,16 @@ function copyPixKey() {
 
 // Registrar contribuição (Firebase ou LocalStorage)
 async function registerContribution() {
+    const contributorNameInput = document.getElementById('contributorName');
     const contributionInput = document.getElementById('contributionValue');
+    const contributorName = contributorNameInput.value.trim();
     const value = parseFloat(contributionInput.value);
+
+    // Validar nome
+    if (!contributorName) {
+        showNotification('Por favor, informe seu nome.', 'error');
+        return;
+    }
 
     // Validar valor
     if (!value || value <= 0) {
@@ -1075,7 +1182,7 @@ async function registerContribution() {
 
     try {
         // Salvar no banco de dados (Firebase ou LocalStorage)
-        const result = await saveToDatabase(selectedPurpose, value);
+        const result = await saveToDatabase(selectedPurpose, value, contributorName);
 
         if (result.success) {
             // Atualizar interface
@@ -1094,7 +1201,8 @@ async function registerContribution() {
 
             showNotification(message, 'success');
 
-            // Limpar campo e esconder formulário
+            // Limpar campos e esconder formulário
+            contributorNameInput.value = '';
             contributionInput.value = '';
             const contributionForm = document.getElementById('contributionForm');
             if (contributionForm) {
@@ -1119,64 +1227,32 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// ===== FUNÇÃO DE DESENVOLVIMENTO - RESETAR TIMER =====
-// Botão RSTADM no footer (Admin Only)
-document.addEventListener('DOMContentLoaded', () => {
-    const rstadmBtn = document.getElementById('rstadm');
-    if (rstadmBtn) {
-        rstadmBtn.addEventListener('click', () => {
-            // Solicitar senha de administrador
-            const senha = prompt('🔐 ACESSO ADMINISTRATIVO\n\nDigite a senha de administrador:');
-
-            // Verificar senha
-            if (senha === 'Teus2004@') {
-                const confirma = confirm('✅ Senha correta!\n\n🔄 Resetar o timer de confirmação?\n\nIsso vai reiniciar o cronômetro de 1 semana.');
-                if (confirma) {
-                    resetTimer();
-                }
-            } else if (senha !== null) {
-                alert('❌ Senha incorreta! Acesso negado.');
-            }
-        });
-    }
-});
-
-// Para usar no console: resetTimer()
-window.resetTimer = function () {
+// ===== FUNÇÃO DE DESENVOLVIMENTO - RESETAR TIMER (SOMENTE ADMIN) =====
+// Função de reset protegida - apenas para administradores autenticados
+window.resetTimer = async function () {
     try {
+        // Verificar se é admin
+        const isAdmin = localStorage.getItem(CONFIG.storage.adminToken);
+        
+        if (!isAdmin) {
+            alert('Acesso negado! Somente administradores podem resetar o timer.');
+            return;
+        }
+        
+        const confirma = confirm('Resetar o timer de confirmação?\n\nIsso vai reiniciar o cronômetro de 1 semana.');
+        if (!confirma) return;
+        
         // Remover o registro de primeira visita
         localStorage.removeItem(CONFIG.timerKey);
 
         // Recarregar a página para reiniciar o timer
-        console.log('✅ Timer resetado! Recarregando página...');
+        console.log('Timer resetado! Recarregando página...');
         location.reload();
     } catch (error) {
-        console.error('❌ Erro ao resetar timer:', error);
+        console.error('Erro ao resetar timer:', error);
     }
 };
 
-// Adicionar atalho de teclado: Ctrl+Shift+R (ou Cmd+Shift+R no Mac) - COM SENHA
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
-        e.preventDefault();
-
-        // Solicitar senha
-        const senha = prompt('🔐 Digite a senha de administrador:');
-
-        if (senha === 'Teus2004@') {
-            const confirma = confirm('✅ Senha correta!\n\n🔄 Resetar o timer de 1 semana?');
-            if (confirma) {
-                resetTimer();
-            }
-        } else if (senha !== null) {
-            alert('❌ Senha incorreta! Acesso negado.');
-        }
-    }
-});
-
-console.log('🔧 MODO DESENVOLVIMENTO ATIVO');
-console.log('📝 Para resetar o timer:');
-console.log('   1. Clique no botão RSTADM no rodapé (requer senha)');
-console.log('   2. Pressione: Ctrl+Shift+R ou Cmd+Shift+R (requer senha)');
-console.log('   3. Console: resetTimer() (sem senha - apenas para dev)');
+console.log('Sistema Save the Date carregado com sucesso!');
+console.log('Para acesso administrativo, visite: /admin-login.html');
 

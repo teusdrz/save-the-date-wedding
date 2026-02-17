@@ -1,5 +1,5 @@
 // ===== CONFIGURAÇÃO DO FIREBASE =====
-// 🔥 Firebase configurado para funcionar imediatamente!
+// Configuração direta do Firebase
 
 const firebaseConfig = {
     apiKey: "AIzaSyDVimbFN7X_uoIGA0ZPogSx-gemB_ytm1s",
@@ -28,9 +28,19 @@ try {
 // ===== FUNÇÕES AUXILIARES DO FIREBASE =====
 
 // Salvar dados no Firebase ou LocalStorage (fallback)
-async function saveToDatabase(purpose, value) {
+async function saveToDatabase(purpose, value, contributorName) {
     if (isFirebaseEnabled) {
         try {
+            // 1. Salvar registro individual de pagamento na coleção 'payments'
+            await db.collection('payments').add({
+                contributorName: contributorName,
+                category: purpose,
+                amount: value,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: new Date().toISOString()
+            });
+
+            // 2. Atualizar totais agregados na coleção 'contributions'
             const docRef = db.collection('contributions').doc(purpose);
             const doc = await docRef.get();
 
@@ -45,14 +55,15 @@ async function saveToDatabase(purpose, value) {
                 completedAt: newValue >= goal ? firebase.firestore.FieldValue.serverTimestamp() : null
             }, { merge: true });
 
+            console.log('✅ Pagamento registrado com sucesso:', { contributorName, purpose, value });
             return { success: true, newValue, goal };
         } catch (error) {
             console.error('Erro ao salvar no Firebase:', error);
             // Fallback para localStorage
-            return saveTofallback(purpose, value);
+            return saveToLocalStorage(purpose, value, contributorName);
         }
     } else {
-        return saveToLocalStorage(purpose, value);
+        return saveToLocalStorage(purpose, value, contributorName);
     }
 }
 
@@ -97,7 +108,8 @@ function setupRealtimeUpdates() {
 
 // ===== FUNÇÕES DE FALLBACK (LocalStorage) =====
 
-function saveToLocalStorage(purpose, value) {
+function saveToLocalStorage(purpose, value, contributorName) {
+    // Salvar totais agregados
     const progressData = JSON.parse(localStorage.getItem('pixContributions') || '{}');
     const currentValue = progressData[purpose] || 0;
     const goal = PURPOSE_GOALS[purpose];
@@ -106,6 +118,18 @@ function saveToLocalStorage(purpose, value) {
     progressData[purpose] = newValue;
     localStorage.setItem('pixContributions', JSON.stringify(progressData));
 
+    // Salvar registros individuais de pagamento
+    const payments = JSON.parse(localStorage.getItem('pixPayments') || '[]');
+    payments.push({
+        contributorName: contributorName,
+        category: purpose,
+        amount: value,
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('pixPayments', JSON.stringify(payments));
+
+    console.log('✅ Pagamento salvo no LocalStorage:', { contributorName, purpose, value });
     return { success: true, newValue, goal };
 }
 
