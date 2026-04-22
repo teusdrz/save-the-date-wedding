@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeEntranceAnimation() {
     const FIRST_VISIT_KEY = 'saveTheDate_hasSeenIntro';
     const hasSeenIntro = localStorage.getItem(FIRST_VISIT_KEY);
-    
+
     // Se já viu a intro, ocultar imediatamente
     if (hasSeenIntro === 'true') {
         const overlay = document.querySelector('.entrance-overlay');
@@ -42,10 +42,10 @@ function initializeEntranceAnimation() {
         }
         return; // Não executar animação
     }
-    
+
     // Marcar que o usuário já viu a intro
     localStorage.setItem(FIRST_VISIT_KEY, 'true');
-    
+
     // Timeline minimalista e elegante
     const tl = gsap.timeline({
         defaults: {
@@ -192,7 +192,7 @@ function initializeEntranceAnimation() {
 async function initializeTimer() {
     // Verificar se o admin resetou o timer
     await checkTimerReset();
-    
+
     // Verificar se já existe um registro de primeira visita
     let firstVisit = localStorage.getItem(CONFIG.timerKey);
 
@@ -215,17 +215,17 @@ async function initializeTimer() {
 async function checkTimerReset() {
     try {
         if (!db) return; // Firebase não disponível
-        
+
         const timerControlDoc = await db.collection(CONFIG.collections.settings).doc('timerControl').get();
-        
+
         if (timerControlDoc.exists) {
             const data = timerControlDoc.data();
-            
+
             if (data.shouldReset) {
                 // Admin resetou o timer - limpar localStorage
                 localStorage.removeItem(CONFIG.timerKey);
                 console.log('Timer resetado pelo administrador');
-                
+
                 // Limpar flag no Firebase (para não resetar novamente)
                 await db.collection(CONFIG.collections.settings).doc('timerControl').update({
                     shouldReset: false,
@@ -486,7 +486,7 @@ async function sendToWhatsApp(guestName, fullName, attendance, message = '') {
             whatsappMessage += `\n\n_Mensagem:_ ${message}`;
         }
     }
-    
+
     // Salvar RSVP no Firebase ANTES de enviar para WhatsApp
     try {
         await saveRSVP({
@@ -576,10 +576,10 @@ async function saveRSVP(data) {
             saveRSVPLocally(data);
             return;
         }
-        
+
         // Gerar ID único para o convidado
         const guestId = data.guestName.toLowerCase().replace(/\s+/g, '-');
-        
+
         // Salvar no Firebase
         await db.collection(CONFIG.collections.rsvp).doc(guestId).set({
             guestName: data.guestName,
@@ -593,12 +593,12 @@ async function saveRSVP(data) {
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-        
+
         console.log('RSVP salvo no Firebase com sucesso:', guestId);
-        
+
         // Também salvar localmente como backup
         saveRSVPLocally(data);
-        
+
     } catch (error) {
         console.error('Erro ao salvar RSVP no Firebase:', error);
         // Fallback para localStorage
@@ -1233,15 +1233,15 @@ window.resetTimer = async function () {
     try {
         // Verificar se é admin
         const isAdmin = localStorage.getItem(CONFIG.storage.adminToken);
-        
+
         if (!isAdmin) {
             alert('Acesso negado! Somente administradores podem resetar o timer.');
             return;
         }
-        
+
         const confirma = confirm('Resetar o timer de confirmação?\n\nIsso vai reiniciar o cronômetro de 1 semana.');
         if (!confirma) return;
-        
+
         // Remover o registro de primeira visita
         localStorage.removeItem(CONFIG.timerKey);
 

@@ -39,7 +39,7 @@ function initializeNavigation() {
             e.preventDefault();
             const section = item.dataset.section;
             switchSection(section);
-            
+
             // Fechar sidebar no mobile após selecionar
             if (window.innerWidth <= 1024) {
                 closeMobileSidebar();
@@ -53,18 +53,18 @@ function initializeMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const sidebar = document.querySelector('.sidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
-    
+
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('open');
             sidebarOverlay.classList.toggle('active');
         });
     }
-    
+
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', closeMobileSidebar);
     }
-    
+
     // Fechar sidebar ao redimensionar para desktop
     window.addEventListener('resize', () => {
         if (window.innerWidth > 1024) {
@@ -76,7 +76,7 @@ function initializeMobileMenu() {
 function closeMobileSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
-    
+
     if (sidebar) sidebar.classList.remove('open');
     if (sidebarOverlay) sidebarOverlay.classList.remove('active');
 }
@@ -89,13 +89,13 @@ function switchSection(section) {
             item.classList.add('active');
         }
     });
-    
+
     // Mostrar seção correspondente
     document.querySelectorAll('.content-section').forEach(sec => {
         sec.style.display = 'none';
     });
     document.getElementById(`${section}-section`).style.display = 'block';
-    
+
     // Recarregar dados se necessário
     if (section === 'guests') {
         loadAllGuests();
@@ -115,7 +115,7 @@ function initializeLogout() {
                 action: 'logout',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            
+
             localStorage.removeItem(CONFIG.storage.adminToken);
             window.location.href = 'admin-login.html';
         } catch (error) {
@@ -138,12 +138,12 @@ async function loadDashboardData() {
                         ...doc.data()
                     });
                 });
-                
+
                 updateStats();
                 updateCharts();
                 updateRecentGuests();
             });
-        
+
         // Carregar pagamentos em tempo real
         db.collection(CONFIG.collections.payments)
             .onSnapshot((snapshot) => {
@@ -157,20 +157,20 @@ async function loadDashboardData() {
                         ...paymentData
                     });
                 });
-                
+
                 // Ordenar por timestamp (mais recente primeiro)
                 dashboardState.payments.sort((a, b) => {
                     const timeA = a.timestamp?.toDate?.() || new Date(a.createdAt || 0);
                     const timeB = b.timestamp?.toDate?.() || new Date(b.createdAt || 0);
                     return timeB - timeA;
                 });
-                
+
                 console.log('✅ Total de pagamentos:', dashboardState.payments.length);
                 updatePaymentStats();
                 loadPayments();
                 loadPaymentsByCategory();
             });
-            
+
     } catch (error) {
         console.error('Erro ao carregar dados:', error);
     }
@@ -182,7 +182,7 @@ function updateStats() {
     const pending = dashboardState.guests.filter(g => g.status === 'pending').length;
     const declined = dashboardState.guests.filter(g => g.status === 'declined').length;
     const total = dashboardState.guests.length;
-    
+
     document.getElementById('confirmedCount').textContent = confirmed;
     document.getElementById('pendingCount').textContent = pending;
     document.getElementById('declinedCount').textContent = declined;
@@ -215,7 +215,7 @@ function initializeDashboard() {
             }
         }
     });
-    
+
     // Gráfico de Timeline
     const timelineCtx = document.getElementById('timelineChart').getContext('2d');
     timelineChart = new Chart(timelineCtx, {
@@ -256,10 +256,10 @@ function updateCharts() {
     const confirmed = dashboardState.guests.filter(g => g.status === 'confirmed').length;
     const pending = dashboardState.guests.filter(g => g.status === 'pending').length;
     const declined = dashboardState.guests.filter(g => g.status === 'declined').length;
-    
+
     statusChart.data.datasets[0].data = [confirmed, pending, declined];
     statusChart.update();
-    
+
     // Atualizar gráfico de timeline
     const timelineData = calculateTimelineData();
     timelineChart.data.labels = timelineData.labels;
@@ -271,7 +271,7 @@ function calculateTimelineData() {
     const confirmedGuests = dashboardState.guests
         .filter(g => g.status === 'confirmed')
         .sort((a, b) => a.timestamp?.toDate() - b.timestamp?.toDate());
-    
+
     const grouped = {};
     confirmedGuests.forEach(guest => {
         if (guest.timestamp) {
@@ -279,17 +279,17 @@ function calculateTimelineData() {
             grouped[date] = (grouped[date] || 0) + 1;
         }
     });
-    
+
     const labels = Object.keys(grouped);
     const data = Object.values(grouped);
-    
+
     // Calcular acumulado
     let accumulated = 0;
     const accumulatedData = data.map(val => {
         accumulated += val;
         return accumulated;
     });
-    
+
     return {
         labels: labels.slice(-7), // Últimos 7 dias
         data: accumulatedData.slice(-7)
@@ -300,16 +300,16 @@ function calculateTimelineData() {
 function updateRecentGuests() {
     const tbody = document.getElementById('recentGuestsBody');
     tbody.innerHTML = '';
-    
+
     const recent = dashboardState.guests.slice(0, 10);
-    
+
     recent.forEach(guest => {
         const row = document.createElement('tr');
         const displayName = guest.fullName || guest.name || guest.guestName || 'N/A';
         const formattedDate = guest.timestamp ? guest.timestamp.toDate().toLocaleDateString('pt-BR') : 'N/A';
         const formattedTime = guest.timestamp ? guest.timestamp.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
         const dateTime = formattedTime ? `${formattedDate} às ${formattedTime}` : formattedDate;
-        
+
         row.innerHTML = `
             <td data-label="Nome">${displayName}</td>
             <td data-label="Email">${guest.email || '-'}</td>
@@ -317,16 +317,16 @@ function updateRecentGuests() {
             <td data-label="Status"><span class="status-badge ${guest.status}">${getStatusText(guest.status)}</span></td>
             <td data-label="Data/Hora">${dateTime}</td>
         `;
-        
+
         // Adicionar tooltip se houver mensagem
         if (guest.message) {
             row.title = `Mensagem: ${guest.message}`;
             row.style.cursor = 'help';
         }
-        
+
         tbody.appendChild(row);
     });
-    
+
     if (recent.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 32px; color: var(--admin-text-light);">Nenhum convidado ainda</td></tr>';
     }
@@ -336,12 +336,12 @@ function updateRecentGuests() {
 function loadAllGuests() {
     const tbody = document.getElementById('allGuestsBody');
     tbody.innerHTML = '';
-    
+
     let filtered = dashboardState.guests;
     if (dashboardState.filter !== 'all') {
         filtered = dashboardState.guests.filter(g => g.status === dashboardState.filter);
     }
-    
+
     filtered.forEach(guest => {
         const row = document.createElement('tr');
         const displayName = guest.fullName || guest.name || guest.guestName || 'N/A';
@@ -350,7 +350,7 @@ function loadAllGuests() {
         const dateTime = formattedTime ? `${formattedDate} às ${formattedTime}` : formattedDate;
         const hasMessage = guest.message && guest.message.trim() !== '';
         const messageIcon = hasMessage ? ' 💬' : '';
-        
+
         row.innerHTML = `
             <td data-label="Nome Completo">${displayName}${messageIcon}</td>
             <td data-label="Email">${guest.email || '-'}</td>
@@ -359,7 +359,7 @@ function loadAllGuests() {
             <td data-label="Status"><span class="status-badge ${guest.status}">${getStatusText(guest.status)}</span></td>
             <td data-label="Data/Hora">${dateTime}</td>
         `;
-        
+
         // Adicionar tooltip e click para ver mensagem
         if (hasMessage) {
             row.style.cursor = 'pointer';
@@ -368,14 +368,14 @@ function loadAllGuests() {
                 alert(`Mensagem de ${displayName}:\n\n"${guest.message}"`);
             });
         }
-        
+
         tbody.appendChild(row);
     });
-    
+
     if (filtered.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--admin-text-light);">Nenhum convidado encontrado</td></tr>';
     }
-    
+
     // Filter buttons
     document.querySelectorAll('.filter-button').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -390,7 +390,7 @@ function loadAllGuests() {
 // ===== PAGAMENTOS =====
 function updatePaymentStats() {
     console.log('📊 Atualizando estatísticas...', dashboardState.payments.length, 'pagamentos');
-    
+
     if (dashboardState.payments.length === 0) {
         document.getElementById('totalPaymentsAmount').textContent = 'R$ 0,00';
         document.getElementById('totalPaymentsCount').textContent = '0';
@@ -398,15 +398,15 @@ function updatePaymentStats() {
         document.getElementById('averagePayment').textContent = 'R$ 0,00';
         return;
     }
-    
+
     // Total arrecadado
     const totalAmount = dashboardState.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
     console.log('💰 Total:', totalAmount);
     document.getElementById('totalPaymentsAmount').textContent = `R$ ${totalAmount.toFixed(2).replace('.', ',')}`;
-    
+
     // Total de PIX
     document.getElementById('totalPaymentsCount').textContent = dashboardState.payments.length;
-    
+
     // Categoria maior
     const categoryCounts = {};
     dashboardState.payments.forEach(p => {
@@ -415,38 +415,38 @@ function updatePaymentStats() {
     });
     const topCat = Object.keys(categoryCounts).reduce((a, b) => categoryCounts[a] > categoryCounts[b] ? a : b, '-');
     document.getElementById('topCategory').textContent = formatCategoryName(topCat);
-    
+
     // Média por PIX
     const average = totalAmount / dashboardState.payments.length;
     document.getElementById('averagePayment').textContent = `R$ ${average.toFixed(2).replace('.', ',')}`;
-    
+
     console.log('✅ Stats atualizadas');
 }
 
 function loadPayments() {
     const tbody = document.getElementById('paymentsTableBody');
     if (!tbody) return;
-    
+
     console.log('🔄 Carregando tabela de pagamentos...', dashboardState.payments.length, 'registros');
-    
+
     tbody.innerHTML = '';
-    
+
     if (dashboardState.payments.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Nenhum pagamento registrado ainda</td></tr>';
         return;
     }
-    
+
     dashboardState.payments.forEach(payment => {
         console.log('💳 Processando pagamento:', payment);
         const row = document.createElement('tr');
         const name = payment.contributorName || payment.name || 'Anônimo';
         const category = formatCategoryName(payment.category || payment.purpose || 'Outros');
         const amount = parseFloat(payment.amount) || 0;
-        
+
         // Lidar com timestamp do Firebase ou string ISO
         let formattedDate = 'N/A';
         let formattedTime = '';
-        
+
         if (payment.timestamp?.toDate) {
             // Firebase Timestamp
             const date = payment.timestamp.toDate();
@@ -458,9 +458,9 @@ function loadPayments() {
             formattedDate = date.toLocaleDateString('pt-BR');
             formattedTime = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
-        
+
         const dateTime = formattedTime ? `${formattedDate} às ${formattedTime}` : formattedDate;
-        
+
         row.innerHTML = `
             <td data-label="Nome">${name}</td>
             <td data-label="Categoria">${category}</td>
@@ -469,16 +469,16 @@ function loadPayments() {
         `;
         tbody.appendChild(row);
     });
-    
+
     console.log('✅ Tabela de pagamentos carregada com sucesso');
 }
 
 function loadPaymentsByCategory() {
     const categoryGrid = document.getElementById('categoryGrid');
     if (!categoryGrid) return;
-    
+
     categoryGrid.innerHTML = '';
-    
+
     // Definir metas por categoria (mesmas do site)
     const PURPOSE_GOALS = {
         'lua-de-mel': 10000,
@@ -489,7 +489,7 @@ function loadPaymentsByCategory() {
         'fogao': 2000,
         'televisao': 2500
     };
-    
+
     // Agrupar pagamentos por categoria
     const categoryData = {};
     dashboardState.payments.forEach(payment => {
@@ -504,7 +504,7 @@ function loadPaymentsByCategory() {
         categoryData[cat].total += parseFloat(payment.amount) || 0;
         categoryData[cat].count += 1;
     });
-    
+
     // Adicionar categorias sem contribuição
     Object.keys(PURPOSE_GOALS).forEach(cat => {
         if (!categoryData[cat]) {
@@ -515,12 +515,12 @@ function loadPaymentsByCategory() {
             };
         }
     });
-    
+
     // Criar cards
     Object.entries(categoryData).forEach(([category, data]) => {
         const percentage = Math.min((data.total / data.goal) * 100, 100);
         const remaining = Math.max(data.goal - data.total, 0);
-        
+
         const card = document.createElement('div');
         card.className = 'category-card';
         card.innerHTML = `
@@ -603,9 +603,9 @@ async function handleResetTimer() {
         '• Resetar o cronômetro na página principal\n\n' +
         'Deseja continuar?'
     );
-    
+
     if (!confirmed) return;
-    
+
     try {
         // Salvar o reset no Firebase para logs
         await db.collection(CONFIG.collections.settings).doc('timer').set({
@@ -613,21 +613,21 @@ async function handleResetTimer() {
             resetBy: 'admin',
             resetCount: firebase.firestore.FieldValue.increment(1)
         }, { merge: true });
-        
+
         // Criar um documento de notificação para o site principal
         await db.collection(CONFIG.collections.settings).doc('timerControl').set({
             shouldReset: true,
             resetTimestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        
+
         alert(
             '✅ Timer resetado com sucesso!\n\n' +
             'Todos os convidados terão um novo prazo de 1 semana.\n' +
             'O cronômetro será reiniciado na próxima visita ao site.'
         );
-        
+
         console.log('Timer resetado pelo admin');
-        
+
     } catch (error) {
         console.error('Erro ao resetar timer:', error);
         alert('❌ Erro ao resetar timer. Tente novamente.');

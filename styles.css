@@ -1982,6 +1982,60 @@ h4 {
     opacity: 0.7;
 }
 
+.detail-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.2rem;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+}
+
+.timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.timeline-time {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+    letter-spacing: 0.08em;
+}
+
+.timeline-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.timeline-content strong {
+    font-size: 0.95rem;
+    color: var(--navy-blue);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.timeline-content span {
+    font-size: 0.82rem;
+    color: var(--light-navy);
+    opacity: 0.75;
+    line-height: 1.5;
+    max-width: 220px;
+}
+
+.timeline-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--navy-blue);
+    opacity: 0.2;
+    margin: 0.6rem 0;
+}
+
 .detail-link {
     display: inline-block;
     margin-top: 1rem;

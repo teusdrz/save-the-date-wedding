@@ -13,13 +13,13 @@ class PixPaymentSystem {
     generatePixCode(amount, guestName, guestEmail) {
         // Gerar ID único para transação
         const transactionId = this.generateTransactionId();
-        
+
         // Criar payload PIX (simplificado - para produção use biblioteca completa)
         const pixPayload = this.createPixPayload(amount, transactionId);
-        
+
         // Salvar transação no Firebase como pendente
         this.savePendingTransaction(transactionId, amount, guestName, guestEmail);
-        
+
         return {
             pixCode: pixPayload,
             transactionId: transactionId,
@@ -35,11 +35,11 @@ class PixPaymentSystem {
         const name = this.pixName;
         const city = this.pixCity;
         const txid = transactionId;
-        
+
         // Payload PIX básico (para demonstração)
         // Este é um exemplo simplificado - use biblioteca oficial para produção
         const payload = `PIX|${pixKey}|${name}|${city}|${amount}|${txid}`;
-        
+
         return payload;
     }
 
@@ -56,7 +56,7 @@ class PixPaymentSystem {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: new Date().toISOString()
             });
-            
+
             console.log('Transação PIX criada:', transactionId);
         } catch (error) {
             console.error('Erro ao salvar transação:', error);
@@ -67,7 +67,7 @@ class PixPaymentSystem {
     async checkPaymentStatus(transactionId) {
         try {
             const doc = await this.db.collection(CONFIG.collections.payments).doc(transactionId).get();
-            
+
             if (doc.exists) {
                 return doc.data().status;
             }
@@ -85,7 +85,7 @@ class PixPaymentSystem {
                 status: 'confirmed',
                 confirmedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            
+
             console.log('Pagamento confirmado:', transactionId);
             return true;
         } catch (error) {

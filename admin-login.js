@@ -19,7 +19,7 @@ if (localStorage.getItem(CONFIG.storage.adminToken)) {
 async function initializeAdmin() {
     try {
         const adminDoc = await db.collection(CONFIG.collections.settings).doc('admin').get();
-        
+
         if (!adminDoc.exists) {
             console.log('Criando admin padrão...');
             await db.collection(CONFIG.collections.settings).doc('admin').set({
@@ -40,22 +40,22 @@ initializeAdmin();
 // Login Form Handler
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('errorMessage');
     const loginButton = document.getElementById('loginButton');
     const buttonText = loginButton.querySelector('.button-text');
     const buttonLoader = loginButton.querySelector('.button-loader');
-    
+
     // Limpar mensagem de erro
     errorMessage.style.display = 'none';
-    
+
     // Mostrar loader
     loginButton.disabled = true;
     buttonText.style.display = 'none';
     buttonLoader.style.display = 'block';
-    
+
     try {
         // Primeiro, tentar verificar com credenciais do CONFIG
         if (email === CONFIG.admin.email && password === CONFIG.admin.password) {
@@ -63,7 +63,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             const token = generateToken();
             localStorage.setItem(CONFIG.storage.adminToken, token);
             localStorage.setItem('admin_email', email);
-            
+
             // Tentar registrar login (se Firebase estiver disponível)
             try {
                 await db.collection('admin_logs').add({
@@ -75,24 +75,24 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             } catch (logError) {
                 console.warn('Não foi possível registrar log:', logError);
             }
-            
+
             // Redirecionar para dashboard
             window.location.href = 'admin-dashboard.html';
             return;
         }
-        
+
         // Se não for credencial padrão, verificar no Firebase
         const adminDoc = await db.collection(CONFIG.collections.settings).doc('admin').get();
-        
+
         if (adminDoc.exists) {
             const adminData = adminDoc.data();
-            
+
             if (email === adminData.email && password === adminData.password) {
                 // Login bem-sucedido
                 const token = generateToken();
                 localStorage.setItem(CONFIG.storage.adminToken, token);
                 localStorage.setItem('admin_email', email);
-                
+
                 // Registrar login
                 try {
                     await db.collection('admin_logs').add({
@@ -104,7 +104,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 } catch (logError) {
                     console.warn('Não foi possível registrar log:', logError);
                 }
-                
+
                 // Redirecionar para dashboard
                 window.location.href = 'admin-dashboard.html';
             } else {
@@ -115,15 +115,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         }
     } catch (error) {
         console.error('Erro ao fazer login:', error);
-        
+
         let errorMsg = error.message;
         if (error.code === 'permission-denied') {
             errorMsg = 'Erro de permissão. Verifique as regras do Firestore.';
         }
-        
+
         errorMessage.textContent = errorMsg;
         errorMessage.style.display = 'block';
-        
+
         // Resetar botão
         loginButton.disabled = false;
         buttonText.style.display = 'block';
@@ -133,7 +133,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
 // Funções auxiliares
 function generateToken() {
-    return Array.from({ length: 32 }, () => 
+    return Array.from({ length: 32 }, () =>
         Math.floor(Math.random() * 16).toString(16)
     ).join('');
 }
