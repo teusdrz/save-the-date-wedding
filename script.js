@@ -5,6 +5,8 @@ const CONFIG = {
     timerKey: 'saveTheDate_firstVisit',
     userIdentityKey: 'saveTheDate_userIdentity',
     oneWeekInMs: 7 * 24 * 60 * 60 * 1000, // 1 semana em milissegundos
+    // Data mínima: qualquer timestamp anterior a esta data será resetado automaticamente
+    minStartDate: new Date('2026-06-01T00:00:00').getTime(),
     collections: {
         guests: "guests",
         payments: "payments",
@@ -202,6 +204,12 @@ async function initializeTimer() {
         localStorage.setItem(CONFIG.timerKey, firstVisit);
     } else {
         firstVisit = parseInt(firstVisit);
+        // Se o timestamp é anterior à data mínima, resetar automaticamente
+        if (firstVisit < CONFIG.minStartDate) {
+            firstVisit = new Date().getTime();
+            localStorage.setItem(CONFIG.timerKey, firstVisit);
+            console.log('Timer resetado: timestamp anterior à data mínima configurada.');
+        }
     }
 
     // Iniciar atualização do cronômetro
