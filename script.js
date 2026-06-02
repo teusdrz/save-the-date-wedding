@@ -1016,13 +1016,13 @@ function initializeMusicPlayer() {
 // ===== LISTA DE PRESENTES / PIX =====
 // Metas de cada finalidade (em reais)
 const PURPOSE_GOALS = {
-    'lua-de-mel': 5000,
-    'casamento': 5000,
-    'imoveis': 5000,
-    'geladeira': 2000,
-    'sofa': 3000,
-    'fogao': 1500,
-    'televisao': 2500
+    'lua-de-mel': 8000,
+    'casamento': 8000,
+    'imoveis': 8000,
+    'geladeira': 3500,
+    'sofa': 5000,
+    'fogao': 2500,
+    'televisao': 5000
 };
 
 let selectedPurpose = 'lua-de-mel'; // Finalidade selecionada atualmente
