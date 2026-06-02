@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "vite build && cp firebase-config.js script.js dist/",
         "preview": "vite preview"
     },
     "devDependencies": {
